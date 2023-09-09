@@ -1,0 +1,87 @@
+package com.example.managerstaff.activities;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import android.os.Bundle;
+import android.view.MenuItem;
+
+import com.example.managerstaff.R;
+import com.example.managerstaff.adapter.ViewPagerAdapter;
+import com.example.managerstaff.databinding.ActivityMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class MainActivity extends AppCompatActivity {
+
+    ActivityMainBinding binding;
+    private int IdUser;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        IdUser = getIntent().getIntExtra("id_user", 0);
+
+        ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        viewPagerAdapter.setIdUser(IdUser);
+        binding.viewPager.setAdapter(viewPagerAdapter);
+        binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position){
+                    case 0:
+                        binding.bottomMenuApp.getMenu().findItem(R.id.item_home).setChecked(true);
+                        break;
+                    case 1:
+                        binding.bottomMenuApp.getMenu().findItem(R.id.item_timekeeping).setChecked(true);
+                        break;
+                    case 2:
+                        binding.bottomMenuApp.getMenu().findItem(R.id.item_calendar).setChecked(true);
+                        break;
+                    case 3:
+                        binding.bottomMenuApp.getMenu().findItem(R.id.item_news).setChecked(true);
+                        break;
+                    case 4:
+                        binding.bottomMenuApp.getMenu().findItem(R.id.item_user).setChecked(true);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        binding.bottomMenuApp.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if(item.getItemId()==R.id.item_home){
+                    binding.viewPager.setCurrentItem(0);
+                }
+                if(item.getItemId()==R.id.item_timekeeping){
+                    binding.viewPager.setCurrentItem(1);
+                }
+                if(item.getItemId()==R.id.item_calendar){
+                    binding.viewPager.setCurrentItem(2);
+                }
+                if(item.getItemId()==R.id.item_news){
+                    binding.viewPager.setCurrentItem(3);
+                }
+                if(item.getItemId()==R.id.item_user){
+                    binding.viewPager.setCurrentItem(4);
+                }
+                return true;
+            }
+        });
+
+        viewPagerAdapter.notifyDataSetChanged();
+    }
+}
