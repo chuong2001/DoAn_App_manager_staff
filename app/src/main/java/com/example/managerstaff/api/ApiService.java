@@ -6,12 +6,13 @@ import com.example.managerstaff.models.responses.UserResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
 
-    ApiService apiService = ApiConfig.getClient("http://192.168.0.104:8000")
+    ApiService apiService = ApiConfig.getClient("http://192.168.0.105:8000")
             .create(ApiService.class);
 
 
@@ -25,28 +26,21 @@ public interface ApiService {
 
     @GET("/api/post/all_post")
     Call<ListPostResponse> getAllPost ();
-//
-//    //http://videoapi.kakoak.tls.tl/video-service/v1/video/6097/related?msisdn=0969633777&timestamp=123&security=123&page=0&size=10&lastHashId=13asd
-//    @GET("/video-service/v1/video/{id}/related")
-//    Call<AppMedia> getVideoRelated(@Path("id") int id,
-//                                   @Query("msisdn") String msisdn,
-//                                   @Query("timestamp") String timestamp,
-//                                   @Query("security")  String security,
-//                                   @Query("page") int page,
-//                                   @Query("size") int size,
-//                                   @Query("lastHashId") String lastHashId,
-//                                   @Header("Accept-language") String header);
-//
-//    @GET("/video-service/v1/video/hot")
-//    Call<AppMedia> getHomeListVideoHot(@Query("msisdn") String msisdn,
-//                                             @Query("timestamp") String timestamp,
-//                                             @Query("security") String security,
-//                                             @Query("page") int page,
-//                                             @Query("size") int size,
-//                                             @Query("lastHashId") String lastHashId,
-//                                             @Header("Accept-language") String acceptLanguage,
-//                                             @Header("mocha-api") String mochaApi,
-//                                             @Header("sec-api") String sec_api);
+
+    @PUT("/api/user/update_user/{id}")
+    Call<UserResponse> updateUser(@Path("id") int id,
+                                   @Query("avatar") String avatar,
+                                   @Query("full_name") String full_name,
+                                   @Query("birthday")  String birthday,
+                                   @Query("gender") String gender,
+                                   @Query("address") String address,
+                                   @Query("email") String email,
+                                   @Query("phone") String phone,
+                                    @Query("wage") double wage);
+
+    @PUT("/api/user/change_password/{id}")
+    Call<UserResponse> changePassword(@Path("id") int id,
+                                      @Query("password") String password);
 //
 //    // tìm channel theo id
 //    //http://videoapi.kakoak.tls.tl/video-service/v1/channel/328/info?msisdn=%2B67075615473&timestamp=1611796455960&security=&clientType=Android&revision=15511

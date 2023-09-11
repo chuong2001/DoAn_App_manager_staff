@@ -9,7 +9,11 @@
     <color name="background">#FABAA8</color>
     <color name="orange">#FD5D2B</color>
     <color name="blue">#1F75CA</color>
+    <color name="blue_back_left">#F2182CFA</color>
+    <color name="blue_back_right">#F200A6FF</color>
+    <color name="blue_shadow">#09223A</color>
     <color name="blue_1">#76ACE1</color>
+    <color name="blue_1_shadow">#4F6478</color>
     <color name="orange_background">#FABAA8</color>
     <color name="title">#F4977D</color>
     <color name="red">#F44336</color>

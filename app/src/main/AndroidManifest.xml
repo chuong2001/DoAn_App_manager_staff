@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +18,16 @@
         android:theme="@style/Theme.ManagerStaff"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ReplyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.InfomationAppActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.InfoUserActivity"
             android:exported="false" />
@@ -32,7 +43,7 @@
             android:name=".activities.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Design.NoActionBar"
-            android:windowSoftInputMode="adjustPan|adjustResize">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -20,7 +20,7 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="112dp"
-                android:background="@color/blue"
+                android:background="@drawable/background_cus"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

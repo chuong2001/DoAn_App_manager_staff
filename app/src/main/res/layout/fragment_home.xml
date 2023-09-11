@@ -15,7 +15,7 @@
             android:id="@+id/layout_header"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@color/blue">
+            android:background="@drawable/background_cus">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView_avatar"
@@ -32,9 +32,8 @@
                     android:id="@+id/img_avatar_user"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:scaleType="centerCrop"
-                    android:background="@color/white"
-                    android:src="@drawable/icon_user" />
+                    android:src="@drawable/item1"
+                    android:scaleType="centerCrop"/>
 
             </androidx.cardview.widget.CardView>
 

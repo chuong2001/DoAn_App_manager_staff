@@ -55,10 +55,10 @@ public class HomeFragment extends Fragment {
                         user=userResponse.getUser();
                         binding.txtNameUser.setText(user.getFullName());
                         if(user.getAvatar().length()>0){
-                        Glide.with(getContext()).load(user.getAvatar())
-                                .error(R.drawable.icon_user)
-                                .placeholder(R.drawable.icon_user)
-                                .into(binding.imgAvatarUser);
+                            Glide.with(getContext()).load(user.getAvatar())
+                                    .error(R.drawable.icon_user)
+                                    .placeholder(R.drawable.icon_user)
+                                    .into(binding.imgAvatarUser);
                         }
                     }
                 }
@@ -123,6 +123,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        clickCallApiGetUserDetail();
         isFragmentActive = true;
         timer = new Timer();
         timer.scheduleAtFixedRate(new The_slide_timer(),2000,3000);

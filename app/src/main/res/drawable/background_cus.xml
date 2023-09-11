@@ -5,10 +5,4 @@
         android:startColor="@color/blue_back_left"
         android:endColor="@color/blue_back_right"
         android:angle="0"/>
-    <padding android:left="7dp"
-        android:top="7dp"
-        android:right="7dp"
-        android:bottom="7dp" />
-
-    <corners android:radius= "8dp" />
 </shape>

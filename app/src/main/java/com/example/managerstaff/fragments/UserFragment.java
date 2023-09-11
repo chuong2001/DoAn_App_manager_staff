@@ -3,6 +3,8 @@ package com.example.managerstaff.fragments;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +13,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.managerstaff.R;
+import com.example.managerstaff.activities.ChangePasswordActivity;
 import com.example.managerstaff.activities.InfoUserActivity;
+import com.example.managerstaff.activities.InfomationAppActivity;
+import com.example.managerstaff.activities.LoginActivity;
 import com.example.managerstaff.api.ApiService;
 import com.example.managerstaff.databinding.FragmentUserBinding;
 import com.example.managerstaff.models.User;
@@ -24,6 +29,7 @@ import retrofit2.Response;
 public class UserFragment extends Fragment {
 
     FragmentUserBinding binding;
+    private int REQUEST_CODE=100;
     private int IdUser;
     private User user;
 
@@ -45,15 +51,34 @@ public class UserFragment extends Fragment {
                 Intent intent=new Intent(requireActivity(), InfoUserActivity.class);
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
                 intent.putExtra("id_user",IdUser);
-                startActivity(intent,bndlanimation);
+                startActivityForResult(intent,REQUEST_CODE,bndlanimation);
             }
         });
 
         binding.cvFeatureLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(requireActivity(), InfoUserActivity.class);
+                Intent intent=new Intent(requireActivity(), LoginActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        binding.cvChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(requireActivity(), ChangePasswordActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
+                intent.putExtra("id_user",IdUser);
+                startActivityForResult(intent,REQUEST_CODE,bndlanimation);
+            }
+        });
+
+        binding.cvFeatureInfoApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(requireActivity(), InfomationAppActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
+                startActivity(intent,bndlanimation);
             }
         });
 
@@ -84,5 +109,13 @@ public class UserFragment extends Fragment {
                 Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==REQUEST_CODE){
+            clickCallApiGetUserDetail();
+        }
     }
 }
