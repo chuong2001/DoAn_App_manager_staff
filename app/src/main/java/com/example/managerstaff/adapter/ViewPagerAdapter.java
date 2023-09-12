@@ -37,6 +37,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         fragHome.setArguments(bundle);
         CalendarFragment fragCalendar = new CalendarFragment();
         TimekeepingFragment fragTimekeeping = new TimekeepingFragment();
+        fragTimekeeping.setArguments(bundle);
         NewsFragment fragNews = new NewsFragment();
         UserFragment fragUser = new UserFragment();
         fragUser.setArguments(bundle);

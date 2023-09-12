@@ -41,18 +41,11 @@ public interface ApiService {
     @PUT("/api/user/change_password/{id}")
     Call<UserResponse> changePassword(@Path("id") int id,
                                       @Query("password") String password);
-//
-//    // tìm channel theo id
-//    //http://videoapi.kakoak.tls.tl/video-service/v1/channel/328/info?msisdn=%2B67075615473&timestamp=1611796455960&security=&clientType=Android&revision=15511
-//    @GET("/video-service/v1/channel/{id}/info")
-//    Call<ChannelDetail> getChannelById(@Path("id") int id,
-//                                       @Header("Accept-language") String header,
-//                                       @Header("mocha-api") String mochaApi,
-//                                       @Query("msisdn") String msisdn,
-//                                       @Query("timestamp") String timestamp,
-//                                       @Query("security") String security,
-//                                       @Query("clientType") String clientType,
-//                                       @Query("revision") String revision);
+
+    @GET("/api/time/get_time_user/{id}")
+    Call<UserResponse> getTimeKeeping(@Path("id") int id,
+                                       @Query("day_start") String day_start,
+                                       @Query("day_end") String day_end);
 //    // list video của 1 channel
 //    //http://videoapi.kakoak.tls.tl/video-service/v1/video/10000/channel?msisdn=%2B67075600203&lastHashId=&page=0&size=20&timestamp=1611103216618&security=&clientType=Android&revision=15511
 //    @GET("/video-service/v1/video/{id}/channel")
