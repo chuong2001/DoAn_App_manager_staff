@@ -65,7 +65,6 @@ public class LoginActivity extends AppCompatActivity {
         binding.edtUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -93,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
         binding.edtPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -122,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(checkPassword && checkUsername) {
+                    setDetailEditText();
                     if (!binding.edtUsername.getText().toString().equals("") && !binding.edtPassword.getText().toString().equals("")) {
                         clickCallApiLogin(binding.edtUsername.getText().toString(), binding.edtPassword.getText().toString());
                     } else {
@@ -131,6 +130,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setDetailEditText(){
+        binding.edtUsername.setTextColor(getColor(R.color.black));
+        binding.edtUsername.setBackgroundDrawable(getDrawable(R.drawable.border_outline_round));
+        binding.txtUsername.setTextColor(getColor(R.color.black));
+        binding.edtPassword.setTextColor(getColor(R.color.black));
+        binding.edtPassword.setBackgroundDrawable(getDrawable(R.drawable.border_outline_round));
+        binding.txtPassword.setTextColor(getColor(R.color.black));
     }
 
     private void setButtonShadow(){

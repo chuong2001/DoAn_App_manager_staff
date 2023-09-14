@@ -55,9 +55,9 @@ public class HomeFragment extends Fragment {
                         user=userResponse.getUser();
                         binding.txtNameUser.setText(user.getFullName());
                         if(user.getAvatar().length()>0){
-                            Glide.with(getContext()).load(user.getAvatar())
+                            Glide.with(getContext()).load("https://cdn-icons-png.flaticon.com/512/219/219969.png")
                                     .error(R.drawable.icon_user)
-                                    .placeholder(R.drawable.icon_user)
+                                    .placeholder(R.drawable.item1)
                                     .into(binding.imgAvatarUser);
                         }
                     }

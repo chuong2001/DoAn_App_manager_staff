@@ -16,6 +16,8 @@
     <string name="header_post">Header post</string>
     <string name="posistion">Chức vụ</string>
     <string name="wage">Lương</string>
+    <string name="month">Tháng</string>
+    <string name="year">Năm</string>
     <string name="wage_of_month">Lương tháng</string>
     <string name="number_of_times_late">Số lần đi muộn</string>
     <string name="some_holidays">Số ngày nghỉ</string>
@@ -77,4 +79,6 @@
     <string name="example_news">Chương trình CĐS quốc gia hướng tới mục tiêu kép là vừa phát triển chính phủ số, kinh tế số, xã hội số, vừa hình thành các doanh nghiệp công nghệ số Việt Nam có năng lực vươn ra toàn cầu, với một số chỉ số cơ bản cụ thể.
         Chương trình xác định tầm nhìn đến năm 2030, Việt Nam trở thành quốc gia số, ổn định và thịnh vượng, tiên phong thử nghiệm các công nghệ và mô hình mới; đổi mới căn bản, toàn diện hoạt động quản lý, điều hành của Chính phủ, hoạt động sản xuất kinh doanh của doanh nghiệp, phương thức sống, làm việc của người dân, phát triển môi trường số an toàn, nhân văn, rộng khắp.
         Theo đó, ở cấp độ toàn quốc, CĐS là chuyển đổi chính phủ số, kinh tế số và xã hội số quốc gia. Ở cấp độ địa phương, CĐS là chuyển đổi sang chính quyền số, kinh tế số và xã hội số trên địa bàn của địa phương đó. Địa phương CĐS thành công sẽ đóng góp vào thành công chung của chuyển đổi số quốc gia. Do vậy, CĐS là nhiệm vụ cần có sự vào cuộc quyết tâm của toàn hệ thống chính trị, triển khai xuyên suốt, đồng bộ từ cấp T.Ư đến địa phương.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

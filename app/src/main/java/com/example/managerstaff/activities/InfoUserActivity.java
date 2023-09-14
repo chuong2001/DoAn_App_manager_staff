@@ -124,7 +124,6 @@ public class InfoUserActivity extends AppCompatActivity {
                                     String[] parts = dateformat1.split("/");
                                     if (parts.length == 3) {
                                         String formattedDate = parts[0] + "-" + parts[1] + "-" + parts[2];
-                                        System.out.println(formattedDate);
                                         binding.txtBirthday.setText(formattedDate);
                                     }
                                 }
@@ -207,7 +206,7 @@ public class InfoUserActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(InfoUserActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(InfoUserActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
     }

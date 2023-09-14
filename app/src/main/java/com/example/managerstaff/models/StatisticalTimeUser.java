@@ -6,6 +6,7 @@ public class StatisticalTimeUser {
     private String dayOfWeekName;
     private boolean isDayOff;
 
+
     public StatisticalTimeUser() {
         this.isDayOff=true;
     }

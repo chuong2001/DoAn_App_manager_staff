@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.example.managerstaff.R;
@@ -45,15 +47,103 @@ public class TimekeepingFragment extends Fragment {
         IdUser=getArguments().getInt("id_user");
         user=new User();
         adapter=new TimeKeepingAdapter(getActivity());
+
         adapter.setIdUser(IdUser);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
         binding.rcvListMonth.setLayoutManager(linearLayoutManager);
         Calendar cal = Calendar.getInstance();
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH) + 1;
+        setDataMonthYear();
+        upDateTableTimeKeeping();
+
+        List<String> months = new ArrayList<>();
+        int positionYear=-1,positionMonth=-1;
+        for (int i = 1; i <= 12; i++) {
+            months.add(String.valueOf(i));
+            if(i<=month) positionMonth++;
+        }
+
+        List<String> years = new ArrayList<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = 2000; i <= currentYear; i++) {
+            years.add(String.valueOf(i));
+            if(i<=year) positionYear++;
+        }
+
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, months);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, years);
+
+        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        binding.spMonth.setAdapter(monthAdapter);
+        binding.spYear.setAdapter(yearAdapter);
+        binding.spMonth.setSelection(positionMonth);
+        binding.spYear.setSelection(positionYear);
+
+        binding.spMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedMonth = parentView.getItemAtPosition(position).toString();
+                binding.spMonth.setSelection(position);
+                month=Integer.parseInt(selectedMonth);
+                setDataMonthYear();
+                upDateTableTimeKeeping();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        binding.spYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // Xử lý khi một mục được chọn trong Spinner
+                String selectedYear = parentView.getItemAtPosition(position).toString();
+                binding.spYear.setSelection(position);
+                year=Integer.parseInt(selectedYear);
+                setDataMonthYear();
+                upDateTableTimeKeeping();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        return binding.getRoot();
+    }
+
+    private void setDataMonthYear(){
+        binding.txtNumberMonth.setText(String.valueOf(month));
+        binding.txtNumberYear.setText(String.valueOf(year));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Calendar cal = Calendar.getInstance();
+        year = cal.get(Calendar.YEAR);
+        month = cal.get(Calendar.MONTH) + 1;
+        int positionYear=-1,positionMonth=-1;
+        for (int i = 1; i <= 12; i++) {
+            if(i<=month) positionMonth++;
+        }
+
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = 2000; i <= currentYear; i++) {
+            if(i<=year) positionYear++;
+        }
+        binding.spMonth.setSelection(positionMonth);
+        binding.spYear.setSelection(positionYear);
+        setDataMonthYear();
+        upDateTableTimeKeeping();
+    }
+
+    private void upDateTableTimeKeeping(){
         statisticalTimeUserList=new ArrayList<>();
         statisticalTimeUserList.addAll(Support.getDatesInMonth(year,month));
-
         String start_day=Support.changeReverDateTime(statisticalTimeUserList.get(0).getDayOfWeek(),true);
         String end_day=Support.changeReverDateTime(statisticalTimeUserList.get(statisticalTimeUserList.size()-1).getDayOfWeek(),true);
         if(start_day.length()>0 && end_day.length()>0){
@@ -61,8 +151,6 @@ public class TimekeepingFragment extends Fragment {
         }else{
             Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
         }
-        binding.rcvListMonth.setAdapter(adapter);
-        return binding.getRoot();
     }
 
     private void clickCallApiGetTimeUser(String start_day,String end_day) {
@@ -91,6 +179,7 @@ public class TimekeepingFragment extends Fragment {
                         binding.txtWageOfMonth.setText(wageOfMonth+"");
                         binding.txtSomeHolidays.setText(countDayOff+"");
                         adapter.setData(statisticalTimeUserList);
+                        binding.rcvListMonth.setAdapter(adapter);
                     }else{
                         Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                     }

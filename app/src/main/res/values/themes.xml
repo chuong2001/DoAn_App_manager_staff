@@ -10,4 +10,8 @@
     <style name="white">
         <item name="colorAccent">#FFFFFF</item> <!-- Whatever color you want-->
     </style>
+
+    <style name="gray">
+        <item name="colorControlHighlight">@color/gray1</item>
+    </style>
 </resources>

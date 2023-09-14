@@ -95,7 +95,7 @@ public class UserFragment extends Fragment {
                         binding.txtFullName.setText(user.getFullName());
                         binding.txtPosition.setText(user.getPosition().getNamePosition());
                         if(user.getAvatar().length()>0){
-                            Glide.with(getContext()).load(user.getAvatar())
+                            Glide.with(getContext()).load("")
                                     .error(R.drawable.item1)
                                     .placeholder(R.drawable.item1)
                                     .into(binding.imgAvatarUser);
