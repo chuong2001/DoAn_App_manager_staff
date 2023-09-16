@@ -39,6 +39,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         TimekeepingFragment fragTimekeeping = new TimekeepingFragment();
         fragTimekeeping.setArguments(bundle);
         NewsFragment fragNews = new NewsFragment();
+        fragNews.setArguments(bundle);
         UserFragment fragUser = new UserFragment();
         fragUser.setArguments(bundle);
 

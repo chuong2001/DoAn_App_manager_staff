@@ -5,16 +5,19 @@ public class StatisticalTimeUser {
     private String dayOfWeek;
     private String dayOfWeekName;
     private boolean isDayOff;
+    private double wage;
+
 
 
     public StatisticalTimeUser() {
         this.isDayOff=true;
     }
 
-    public StatisticalTimeUser(String dayOfWeek, String dayOfWeekName, boolean isDayOff) {
+    public StatisticalTimeUser(String dayOfWeek, String dayOfWeekName, boolean isDayOff, double wage) {
         this.dayOfWeek = dayOfWeek;
         this.dayOfWeekName = dayOfWeekName;
         this.isDayOff = isDayOff;
+        this.wage=wage;
     }
 
     public String getDayOfWeek() {
@@ -41,4 +44,11 @@ public class StatisticalTimeUser {
         isDayOff = dayOff;
     }
 
+    public double getWage() {
+        return wage;
+    }
+
+    public void setWage(double wage) {
+        this.wage = wage;
+    }
 }

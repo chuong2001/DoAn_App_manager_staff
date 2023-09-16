@@ -88,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
+            android:foreground="@drawable/animation_click"
             android:backgroundTint="@color/white"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
@@ -138,6 +139,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
             android:backgroundTint="@color/white"
+            android:foreground="@drawable/animation_click"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
             android:layout_below="@+id/cv_feature_info_user">
@@ -187,6 +189,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
             android:backgroundTint="@color/white"
+            android:foreground="@drawable/animation_click"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
             android:layout_below="@+id/cv_change_password">
@@ -236,6 +239,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
             android:backgroundTint="@color/white"
+            android:foreground="@drawable/animation_click"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
             android:layout_below="@+id/cv_reply_app">
@@ -285,6 +289,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
             android:backgroundTint="@color/white"
+            android:foreground="@drawable/animation_click"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
             android:layout_below="@+id/cv_feature_info_app">

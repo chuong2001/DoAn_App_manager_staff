@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.managerstaff.R;
 import com.example.managerstaff.activities.ChangePasswordActivity;
+import com.example.managerstaff.activities.FeedBackActivity;
 import com.example.managerstaff.activities.InfoUserActivity;
 import com.example.managerstaff.activities.InfomationAppActivity;
 import com.example.managerstaff.activities.LoginActivity;
@@ -73,6 +74,17 @@ public class UserFragment extends Fragment {
             }
         });
 
+
+        binding.cvReplyApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(requireActivity(), FeedBackActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getActivity(), R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
+                intent.putExtra("id_user",IdUser);
+                startActivity(intent,bndlanimation);
+            }
+        });
+
         binding.cvFeatureInfoApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,8 +106,8 @@ public class UserFragment extends Fragment {
                         user=userResponse.getUser();
                         binding.txtFullName.setText(user.getFullName());
                         binding.txtPosition.setText(user.getPosition().getNamePosition());
-                        if(user.getAvatar().length()>0){
-                            Glide.with(getContext()).load("")
+                        if(user.getAvatar().length()>0 && isAdded()){
+                            Glide.with(requireContext()).load("")
                                     .error(R.drawable.item1)
                                     .placeholder(R.drawable.item1)
                                     .into(binding.imgAvatarUser);

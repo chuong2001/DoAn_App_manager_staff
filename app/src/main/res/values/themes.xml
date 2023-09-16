@@ -12,6 +12,6 @@
     </style>
 
     <style name="gray">
-        <item name="colorControlHighlight">@color/gray1</item>
+        <item name="colorControlHighlight">@color/black</item>
     </style>
 </resources>

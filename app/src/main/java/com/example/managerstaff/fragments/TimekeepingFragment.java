@@ -1,8 +1,13 @@
 package com.example.managerstaff.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -17,9 +22,11 @@ import com.example.managerstaff.adapter.SlidePostAdapter;
 import com.example.managerstaff.adapter.TimeKeepingAdapter;
 import com.example.managerstaff.api.ApiService;
 import com.example.managerstaff.databinding.FragmentTimekeepingBinding;
+import com.example.managerstaff.models.Setting;
 import com.example.managerstaff.models.StatisticalTimeUser;
 import com.example.managerstaff.models.User;
 import com.example.managerstaff.models.responses.ListPostResponse;
+import com.example.managerstaff.models.responses.SettingResponse;
 import com.example.managerstaff.models.responses.UserResponse;
 import com.example.managerstaff.supports.Support;
 
@@ -38,6 +45,7 @@ public class TimekeepingFragment extends Fragment {
     private int year=0;
     private int IdUser;
     private User user;
+    private Setting setting;
     private TimeKeepingAdapter adapter;
     private List<StatisticalTimeUser> statisticalTimeUserList;
     @Override
@@ -46,7 +54,26 @@ public class TimekeepingFragment extends Fragment {
         binding=FragmentTimekeepingBinding.inflate(inflater, container, false);
         IdUser=getArguments().getInt("id_user");
         user=new User();
-        adapter=new TimeKeepingAdapter(getActivity());
+        setting=new Setting();
+        FragmentActivity fragmentActivity = getActivity();
+        adapter=new TimeKeepingAdapter(fragmentActivity);
+        adapter.setOnClickListener(position -> {
+            Fragment belowFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (belowFragment == null || !belowFragment.isVisible()) {
+                binding.fragmentContainer.setVisibility(View.VISIBLE);
+                TimeKeepingDetailFragment fragment = new TimeKeepingDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("id_user", this.IdUser);
+                bundle.putString("time_day", this.statisticalTimeUserList.get(position).getDayOfWeek());
+                bundle.putString("name_day", this.statisticalTimeUserList.get(position).getDayOfWeekName());
+                fragment.setArguments(bundle);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
 
         adapter.setIdUser(IdUser);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
@@ -123,6 +150,13 @@ public class TimekeepingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Fragment belowFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (belowFragment != null && belowFragment.isVisible()) {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.popBackStack();
+        }
+
+        binding.fragmentContainer.setVisibility(View.GONE);
         Calendar cal = Calendar.getInstance();
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH) + 1;
@@ -144,9 +178,9 @@ public class TimekeepingFragment extends Fragment {
     private void upDateTableTimeKeeping(){
         statisticalTimeUserList=new ArrayList<>();
         statisticalTimeUserList.addAll(Support.getDatesInMonth(year,month));
-        String start_day=Support.changeReverDateTime(statisticalTimeUserList.get(0).getDayOfWeek(),true);
-        String end_day=Support.changeReverDateTime(statisticalTimeUserList.get(statisticalTimeUserList.size()-1).getDayOfWeek(),true);
-        if(start_day.length()>0 && end_day.length()>0){
+        String start_day=statisticalTimeUserList.get(0).getDayOfWeek();
+        String end_day=statisticalTimeUserList.get(statisticalTimeUserList.size()-1).getDayOfWeek();
+        if(start_day.length()>0 && end_day.length()>0 && isAdded()){
             clickCallApiGetTimeUser(start_day,end_day);
         }else{
             Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
@@ -161,22 +195,51 @@ public class TimekeepingFragment extends Fragment {
                 if (userResponse != null) {
                     if(userResponse.getCode()==200){
                         user=userResponse.getUser();
-                        int countWorkDay=0;
+                        clickCallApiGetSetting(user);
+                    }else{
+                        Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void clickCallApiGetSetting(User userS) {
+        ApiService.apiService.getSetting().enqueue(new Callback<SettingResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(Call<SettingResponse> call, Response<SettingResponse> response) {
+                SettingResponse settingResponse = response.body();
+                if (settingResponse != null) {
+                    if(settingResponse.getCode()==200){
+                        setting=settingResponse.getSetting();
+                        int countWorkDay=0,countLate=0;
                         double wageOfMonth=0;
                         for(int i=0;i<statisticalTimeUserList.size();i++){
-                            for(int j=0;j<user.getListTimeIns().size();j++){
-                                if(statisticalTimeUserList.get(i).getDayOfWeek().equals(user.getListTimeIns().get(j).getDayIn())){
+                            for(int j=0;j<userS.getListTimeIns().size();j++){
+                                if(statisticalTimeUserList.get(i).getDayOfWeek().equals(userS.getListTimeIns().get(j).getDayIn())){
                                     statisticalTimeUserList.get(i).setDayOff(false);
+                                    double w=Support.getWageOfDay(userS,statisticalTimeUserList.get(i).getDayOfWeek(),setting,statisticalTimeUserList.get(i).getDayOfWeekName());
+                                    statisticalTimeUserList.get(i).setWage(w);
+                                    if(userS.getListTimeIns().get(j).getTimeIn().compareTo(setting.getTimeStart())>0) countLate++;
                                     countWorkDay++;
+                                    wageOfMonth+=w;
                                     break;
                                 }
                             }
                         }
-                        wageOfMonth=countWorkDay*user.getWage();
                         int countDayOff=statisticalTimeUserList.size()-countWorkDay;
                         binding.txtNumberOfWorkingDays.setText(countWorkDay+"");
-                        binding.txtWageOfDay.setText(user.getWage()+"");
-                        binding.txtWageOfMonth.setText(wageOfMonth+"");
+                        binding.txtWageOfDay.setText(Support.formatWage(String.valueOf((int) userS.getWage()))+" VND");
+                        binding.txtNumberOfTimesLate.setText(countLate+"");
+                        binding.txtWageOfMonth.setText(Support.formatWage(String.valueOf((int) wageOfMonth))+" VND");
                         binding.txtSomeHolidays.setText(countDayOff+"");
                         adapter.setData(statisticalTimeUserList);
                         binding.rcvListMonth.setAdapter(adapter);
@@ -189,7 +252,7 @@ public class TimekeepingFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<UserResponse> call, Throwable t) {
+            public void onFailure(Call<SettingResponse> call, Throwable t) {
                 Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
