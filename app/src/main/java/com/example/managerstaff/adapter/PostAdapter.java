@@ -1,6 +1,9 @@
 package com.example.managerstaff.adapter;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.managerstaff.R;
+import com.example.managerstaff.activities.ChangePasswordActivity;
+import com.example.managerstaff.activities.PostDetailActivity;
 import com.example.managerstaff.models.Post;
 import com.example.managerstaff.models.TimeIn;
 import com.example.managerstaff.models.TimeOut;
@@ -24,8 +29,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     private List<Post> listPosts;
 
+    private int IdUser;
+
     public PostAdapter(Activity mActivity) {
         this.mActivity = mActivity;
+    }
+
+    public void setIdUser(int IdUser){
+        this.IdUser=IdUser;
     }
 
     public void setData(List<Post> listPosts){
@@ -58,7 +69,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.layoutItemPost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    Intent intent=new Intent(mActivity, PostDetailActivity.class);
+                    Bundle bndlanimation = ActivityOptions.makeCustomAnimation(mActivity, R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
+                    intent.putExtra("id_user",IdUser);
+                    intent.putExtra("id_post",post.getIdPost());
+                    mActivity.startActivity(intent,bndlanimation);
                 }
             });
         }

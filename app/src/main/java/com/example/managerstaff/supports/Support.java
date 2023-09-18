@@ -155,25 +155,24 @@ public class Support {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static double getWageOfDay(User user, String day, Setting setting,String dayName){
+    public static double getWageOfDay(User user, String day, Setting setting,String dayName) {
 
-        double wage=0;
-        long hours=0;
-        double wageOneDay=user.getWage()*getCoefficient(day,setting,dayName);
+        double wage = 0;
+        long hours = 0;
+        double wageOneDay = user.getWage() * getCoefficient(day, setting, dayName);
 
-        hours=getNumberWorking(user, day);
+        hours = getNumberWorking(user, day);
         hours--;
-        if(hours<8 && hours>=4){
-            wage=wageOneDay/2;
-        }else{
-            if(hours>=8){
-                wage=wageOneDay+(hours-8)*setting.getOvertime()*(wageOneDay/8);
+        if (hours < 8 && hours >= 4) {
+            wage = wageOneDay / 2;
+        } else {
+            if (hours >= 8) {
+                wage = wageOneDay + (hours - 8) * setting.getOvertime() * (wageOneDay / 8);
             }
         }
 
         return wage;
 
     }
-
 
 }

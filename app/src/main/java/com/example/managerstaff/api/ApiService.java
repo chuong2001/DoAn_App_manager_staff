@@ -2,6 +2,7 @@ package com.example.managerstaff.api;
 
 import com.example.managerstaff.models.responses.ListPostResponse;
 import com.example.managerstaff.models.responses.ObjectResponse;
+import com.example.managerstaff.models.responses.PostResponse;
 import com.example.managerstaff.models.responses.SettingResponse;
 import com.example.managerstaff.models.responses.UserResponse;
 
@@ -15,7 +16,7 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    ApiService apiService = ApiConfig.getClient("http://192.168.0.117:8000")
+    ApiService apiService = ApiConfig.getClient("http://192.168.12.100:8000")
             .create(ApiService.class);
 
 
@@ -55,6 +56,14 @@ public interface ApiService {
     Call<ObjectResponse> sendFeedBack(@Path("id") int id,
                                       @Query("time_feedback") String timeFeedback,
                                       @Query("content") String content);
+
+    @POST("/api/feedback/add_feedback/{id}")
+    Call<ObjectResponse> addComment(@Path("id") int id,
+                                      @Query("time_feedback") String timeFeedback,
+                                      @Query("content") String content);
+
+    @GET("/api/post/post_detail/{id}")
+    Call<PostResponse> getPostDetail(@Path("id") int id);
 
     @GET("/api/setting/get_setting")
     Call<SettingResponse> getSetting();

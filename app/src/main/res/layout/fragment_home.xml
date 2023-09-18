@@ -31,8 +31,8 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img_avatar_user"
                     android:layout_width="50dp"
+                    android:background="@color/white"
                     android:layout_height="50dp"
-                    android:src="@drawable/item1"
                     android:scaleType="centerCrop"/>
 
             </androidx.cardview.widget.CardView>

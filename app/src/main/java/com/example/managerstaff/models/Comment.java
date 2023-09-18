@@ -16,14 +16,38 @@ public class Comment {
     @SerializedName("content")
     @Expose
     private String content;
+    @SerializedName("post")
+    @Expose
+    private int idPost;
+    @SerializedName("user")
+    @Expose
+    private int idUser;
 
     public Comment() {
     }
 
-    public Comment(int idComment, String time_cmt, String content) {
+    public Comment(int idComment, String time_cmt, String content, int idPost, int idUser) {
         this.idComment = idComment;
         this.time_cmt = time_cmt;
         this.content = content;
+        this.idPost = idPost;
+        this.idUser = idUser;
+    }
+
+    public int getIdPost() {
+        return idPost;
+    }
+
+    public void setIdPost(int idPost) {
+        this.idPost = idPost;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
     }
 
     public int getIdComment() {

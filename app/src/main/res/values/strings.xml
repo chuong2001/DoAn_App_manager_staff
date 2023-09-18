@@ -72,6 +72,8 @@
     <string name="time">Thời gian</string>
     <string name="rank">Thứ</string>
     <string name="day">Ngày</string>
+    <string name="question_answer">Hỏi &amp; Đáp</string>
+    <string name="enter_content">Nhập câu hỏi</string>
     <string name="number_of_working_days">Số ngày đi làm</string>
     <string name="password_confirm">Xác nhận mật khẩu</string>
     <string name="password_incorrect">Mật khẩu không khớp</string>

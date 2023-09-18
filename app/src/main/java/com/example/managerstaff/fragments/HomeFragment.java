@@ -17,6 +17,7 @@ import com.example.managerstaff.models.Post;
 import com.example.managerstaff.models.User;
 import com.example.managerstaff.models.responses.ListPostResponse;
 import com.example.managerstaff.models.responses.UserResponse;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
 import java.util.TimerTask;
@@ -55,9 +56,9 @@ public class HomeFragment extends Fragment {
                         user=userResponse.getUser();
                         binding.txtNameUser.setText(user.getFullName());
                         if(user.getAvatar().length()>0){
-                            Glide.with(getContext()).load("https://cdn-icons-png.flaticon.com/512/219/219969.png")
-                                    .error(R.drawable.icon_user)
-                                    .placeholder(R.drawable.item1)
+                            Glide.with(getContext()).load(user.getAvatar())
+                                    .error(R.drawable.icon_user_gray)
+                                    .placeholder(R.drawable.icon_user_gray)
                                     .into(binding.imgAvatarUser);
                         }
                     }

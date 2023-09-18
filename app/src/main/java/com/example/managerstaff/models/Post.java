@@ -36,11 +36,14 @@ public class Post {
     @SerializedName("comments")
     @Expose
     private ArrayList<Comment> listComments;
+    @SerializedName("user")
+    @Expose
+    private int idUser;
 
     public Post() {
     }
 
-    public Post(int idPost, String typePost, String headerPost, String timePost, String content, String numLike, String numComment, ArrayList<Image> listImages, ArrayList<Comment> listComments) {
+    public Post(int idPost, String typePost, String headerPost, String timePost, String content, String numLike, String numComment, ArrayList<Image> listImages, ArrayList<Comment> listComments, int idUser) {
         this.idPost = idPost;
         this.typePost = typePost;
         this.headerPost = headerPost;
@@ -50,6 +53,15 @@ public class Post {
         this.numComment = numComment;
         this.listImages = listImages;
         this.listComments = listComments;
+        this.idUser = idUser;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
     }
 
     public String getTypePost() {
