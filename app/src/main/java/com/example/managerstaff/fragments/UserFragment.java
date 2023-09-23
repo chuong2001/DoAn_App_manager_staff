@@ -31,7 +31,7 @@ public class UserFragment extends Fragment {
 
     FragmentUserBinding binding;
     private int REQUEST_CODE=100;
-    private int IdUser;
+    private int IdUser,isAdmin;
     private User user;
 
     @Override
@@ -39,6 +39,10 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentUserBinding.inflate(inflater, container, false);
         IdUser=getArguments().getInt("id_user");
+        isAdmin=getArguments().getInt("is_admin");
+        if(isAdmin>0){
+            binding.cvReplyApp.setVisibility(View.GONE);
+        }
         user=new User();
         eventClick();
         clickCallApiGetUserDetail();

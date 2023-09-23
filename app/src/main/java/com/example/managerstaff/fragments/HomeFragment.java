@@ -1,7 +1,9 @@
 package com.example.managerstaff.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +34,21 @@ public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;
     private List<Post> listPosts;
     private boolean isFragmentActive = true;
+    private OnFragmentInteractionListener mListener;
     private User user;
     private Timer timer;
     private int IdUser;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +69,7 @@ public class HomeFragment extends Fragment {
                     if(userResponse.getCode()==200){
                         user=userResponse.getUser();
                         binding.txtNameUser.setText(user.getFullName());
+                        binding.txtPosition.setText(user.getPosition().getNamePosition());
                         if(user.getAvatar().length()>0){
                             Glide.with(getContext()).load(user.getAvatar())
                                     .error(R.drawable.icon_user_gray)
@@ -72,6 +87,10 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    public interface OnFragmentInteractionListener {
+        void onFragment1ButtonClicked(int position);
+    }
+
     private void clickCallApiGetListPosts() {
         ApiService.apiService.getAllPost().enqueue(new Callback<ListPostResponse>() {
             @Override
@@ -80,7 +99,7 @@ public class HomeFragment extends Fragment {
                 if (listPostResponse != null) {
                     if(listPostResponse.getCode()==200){
                         listPosts=listPostResponse.getListPosts();
-                        SlidePostAdapter postAdapter = new SlidePostAdapter(getContext(), listPosts);
+                        SlidePostAdapter postAdapter = new SlidePostAdapter(getContext(), listPosts,IdUser);
                         binding.myPager.setAdapter(postAdapter);
                         binding.myTablayout.setupWithViewPager(binding.myPager,true);
                     }

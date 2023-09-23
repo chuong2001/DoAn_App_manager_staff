@@ -3,21 +3,21 @@ package com.example.managerstaff.adapter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.managerstaff.R;
+import com.example.managerstaff.fragments.ADTimeKeepingFragment;
 import com.example.managerstaff.fragments.CalendarFragment;
 import com.example.managerstaff.fragments.HomeFragment;
-import com.example.managerstaff.fragments.NewsFragment;
 import com.example.managerstaff.fragments.TimekeepingFragment;
 import com.example.managerstaff.fragments.UserFragment;
+import com.example.managerstaff.fragments.UtilitiesFragment;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private int IdUser;
+    private int isAdmin;
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
@@ -27,19 +27,27 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         this.IdUser=IdUser;
     }
 
+    public void setIsAdmin(int isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
 
         Bundle bundle = new Bundle();
         bundle.putInt("id_user", this.IdUser);
+        bundle.putInt("is_admin", this.isAdmin);
         HomeFragment fragHome = new HomeFragment();
+        ADTimeKeepingFragment fragTimeKeepingAD=new ADTimeKeepingFragment();
+        fragTimeKeepingAD.setArguments(bundle);
         fragHome.setArguments(bundle);
         CalendarFragment fragCalendar = new CalendarFragment();
+        fragCalendar.setArguments(bundle);
         TimekeepingFragment fragTimekeeping = new TimekeepingFragment();
         fragTimekeeping.setArguments(bundle);
-        NewsFragment fragNews = new NewsFragment();
-        fragNews.setArguments(bundle);
+        UtilitiesFragment fragutili = new UtilitiesFragment();
+        fragutili.setArguments(bundle);
         UserFragment fragUser = new UserFragment();
         fragUser.setArguments(bundle);
 
@@ -48,11 +56,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return fragHome;
             case 1:
-                return fragTimekeeping;
+                return (isAdmin==0)?fragTimekeeping:fragTimeKeepingAD;
             case 2:
                 return fragCalendar;
             case 3:
-                return fragNews;
+                return fragutili;
             case 4:
                 return fragUser;
         }
@@ -64,24 +72,4 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         return 5;
     }
 
-//    @Nullable
-//    @Override
-//    public CharSequence getPageTitle(int position) {
-//        String title="";
-//        switch (position){
-//            case 0:
-//                title = "Trang chủ";
-//            case 1:
-//                title = "Chấm công";
-//            case 2:
-//                title = "Lịch";
-//            case 3:
-//                title = "Tin tức";
-//            case 4:
-//                title = "Cá nhân";
-//            default:
-//                title = "Trang chủ";
-//        }
-//        return title;
-//    }
 }

@@ -8,12 +8,12 @@
         android:icon="@drawable/icon_table"
         android:id="@+id/item_timekeeping"
         />
-    <item android:title="@string/calendar"
+    <item android:title="@string/calendarA"
         android:icon="@drawable/icon_calendar"
         android:id="@+id/item_calendar"
         />
-    <item android:title="@string/news"
-        android:icon="@drawable/icon_new"
+    <item android:title="@string/utilities"
+        android:icon="@drawable/icon_utilities"
         android:id="@+id/item_news"
         />
     <item android:title="@string/user"

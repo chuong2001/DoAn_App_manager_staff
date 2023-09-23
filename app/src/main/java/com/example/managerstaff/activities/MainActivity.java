@@ -10,12 +10,13 @@ import android.view.MenuItem;
 import com.example.managerstaff.R;
 import com.example.managerstaff.adapter.ViewPagerAdapter;
 import com.example.managerstaff.databinding.ActivityMainBinding;
+import com.example.managerstaff.fragments.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
 
     ActivityMainBinding binding;
-    private int IdUser;
+    private int IdUser,isAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         IdUser = getIntent().getIntExtra("id_user", 0);
+        isAdmin = getIntent().getIntExtra("is_admin", 0);
 
         ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPagerAdapter.setIdUser(IdUser);
+        viewPagerAdapter.setIsAdmin(isAdmin);
         binding.viewPager.setAdapter(viewPagerAdapter);
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -83,5 +86,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
         viewPagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFragment1ButtonClicked(int position) {
+        binding.viewPager.setCurrentItem(position);
+        switch (position){
+            case 0:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_home).setChecked(true);
+                break;
+            case 1:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_timekeeping).setChecked(true);
+                break;
+            case 2:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_calendar).setChecked(true);
+                break;
+            case 3:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_news).setChecked(true);
+                break;
+            case 4:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_user).setChecked(true);
+                break;
+        }
     }
 }

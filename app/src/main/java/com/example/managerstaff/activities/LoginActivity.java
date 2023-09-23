@@ -161,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                     if(userResponse.getCode()==200){
                         Intent intent=new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("id_user",userResponse.getUser().getId());
+                        intent.putExtra("is_admin",(username.equalsIgnoreCase("admin"))?1:0);
                         startActivity(intent);
                         finish();
                     }else{

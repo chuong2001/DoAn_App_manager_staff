@@ -7,67 +7,106 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+        android:id="@+id/cardView1"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:visibility="visible"
         app:cardCornerRadius="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivuser"
+            android:id="@+id/ivuser_receive"
+            android:src="@drawable/img_notify"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="32dp"
+        android:visibility="visible"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivuser_send"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_notify" />
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
+        android:id="@+id/layout_receiver"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:background="@color/gray2"
+        app:layout_constraintHorizontal_bias="0"
+        android:background="@drawable/botron_edittext_gray"
+        android:maxWidth="300dp"
         android:padding="10dp"
+        android:visibility="visible"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintStart_toEndOf="@+id/cardView1"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/name_user"
+            android:id="@+id/body_commnet_receive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nguyễn Đăng Chương - 13/05/2023"
-            android:textColor="@color/black"
-            android:layout_marginRight="5dp"
-            app:layout_constrainedWidth="true"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/ic_delete"
+            android:maxWidth="280dp"
+            android:text="Video rất hay"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/body_commnet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Video rất hay ksfjskjflsdjflksdjflsjfsfkjsdlkfjskdfnmskdjsdlkfjslfjjkldsfj"
-            android:textColor="#272727"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name_user" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/ic_delete"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/icon_delete_cus"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintHorizontal_bias="1"
+        android:maxWidth="300dp"
+        android:visibility="visible"
+        android:background="@drawable/botron_edittext_blue"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:padding="10dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@+id/cardView2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/body_commnet_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:maxWidth="280dp"
+            android:textSize="16sp"
+            android:text="Video rất hay lkjslkfjklsdflsdkfjdklsfsdkllksdfksdlklsdfjklsdfksdjflksdfsk"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

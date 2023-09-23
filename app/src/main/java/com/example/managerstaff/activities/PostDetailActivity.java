@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,8 +25,10 @@ import com.example.managerstaff.databinding.ActivityPostDetailBinding;
 import com.example.managerstaff.models.Comment;
 import com.example.managerstaff.models.Post;
 import com.example.managerstaff.models.User;
+import com.example.managerstaff.models.responses.CommentResponse;
 import com.example.managerstaff.models.responses.PostResponse;
 import com.example.managerstaff.models.responses.UserResponse;
+import com.example.managerstaff.supports.Support;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.text.SimpleDateFormat;
@@ -44,11 +48,6 @@ public class PostDetailActivity extends AppCompatActivity {
     private Post post;
     private User user,userAdmin;
     private ImageAdapter adapter;
-    private ImageView imgCancel,imgSend;
-    private CommentAdapter commentAdapter;
-    private List<Comment> mListComment;
-    private RecyclerView rcvComment;
-    private EditText edtContentComment;
     private boolean isEnterContent;
 
     @Override
@@ -56,7 +55,6 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityPostDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mListComment=new ArrayList<>();
         IdUser = getIntent().getIntExtra("id_user", 0);
         IdPost = getIntent().getIntExtra("id_post", 0);
         userAdmin=new User();
@@ -81,92 +79,23 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
-        binding.btnQuestionAnswer.setOnClickListener(new View.OnClickListener() {
+        binding.imgQuestionAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialogQuestionAnswer();
+                Intent intent=new Intent(PostDetailActivity.this, ChatActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(PostDetailActivity.this, R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
+                intent.putExtra("id_user",IdUser);
+                intent.putExtra("id_admin",userAdmin.getId());
+                intent.putExtra("id_post",IdPost);
+                startActivity(intent,bndlanimation);
             }
         });
 
     }
 
-    private void showDialogQuestionAnswer() {
-        View viewDialog = getLayoutInflater().inflate(R.layout.dialog_question_answer, null);
-        initViewComment(viewDialog);
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        bottomSheetDialog.setContentView(viewDialog);
-        bottomSheetDialog.show();
-        bottomSheetDialog.setCancelable(true);
-        bottomSheetDialog.getWindow().setDimAmount(0.3f);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        this.rcvComment.setLayoutManager(linearLayoutManager);
-        this.mListComment=post.getListComments();
-        commentAdapter=new CommentAdapter(this,user,userAdmin);
-        commentAdapter.setData(mListComment);
-        this.rcvComment.setAdapter(commentAdapter);
-        edtContentComment.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if(edtContentComment.getText().toString().length()>0){
-                    isEnterContent=true;
-                    imgSend.setImageDrawable(getDrawable(R.drawable.icon_send_blue));
-                }else{
-                    imgSend.setImageDrawable(getDrawable(R.drawable.icon_send_gray));
-                    isEnterContent=false;
-                }
-            }
-        });
-        imgSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isEnterContent){
-
-                }
-            }
-        });
-    }
-
-    private void initViewComment(View view) {
-        imgCancel=view.findViewById(R.id.imv_cancelx);
-        edtContentComment=view.findViewById(R.id.edt_comment);
-        imgSend=view.findViewById(R.id.send);
-        rcvComment=view.findViewById(R.id.rcv_list_comment);
-    }
 
     private void clickCallApiGetUserDetail() {
-        ApiService.apiService.getUserDetail(IdUser).enqueue(new Callback<UserResponse>() {
-            @Override
-            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                UserResponse userResponse = response.body();
-                if (userResponse != null) {
-                    if(userResponse.getCode()==200){
-                        user=userResponse.getUser();
-                    }else{
-                        Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
-                    }
-                }else{
-                    Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserResponse> call, Throwable t) {
-                Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void clickCallApiAddComment() {
         ApiService.apiService.getUserDetail(IdUser).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {

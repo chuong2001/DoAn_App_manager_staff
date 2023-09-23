@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -29,7 +31,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private int idUser;
     private User user, userAdmin;
 
-    public CommentAdapter(Activity mActivity,User user, User userAdmin) {
+    public CommentAdapter(Activity mActivity) {
+        this.mActivity = mActivity;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setUserAdmin(User userAdmin) {
+        this.userAdmin = userAdmin;
+    }
+
+    public CommentAdapter(Activity mActivity, User user, User userAdmin) {
         this.mActivity = mActivity;
         this.user=user;
         this.userAdmin=userAdmin;
@@ -44,8 +58,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         this.idUser = idUser;
     }
 
-    public void setAddListVideo(List<Comment> list) {
-        this.mListComment.addAll(list);
+    public void addComment(Comment comment) {
+        this.mListComment.add(comment);
         notifyDataSetChanged();
     }
 
@@ -62,22 +76,29 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         Comment comment = mListComment.get(position);
         if(comment!=null){
             if(comment.getIdUser()==user.getId()){
-                holder.body.setText(comment.getContent());
-                holder.infoUser.setText(user.getFullName()+" "+comment.getTime_cmt());
+                holder.cvUserSender.setVisibility(View.VISIBLE);
+                holder.layoutBodySender.setVisibility(View.VISIBLE);
+                holder.cvUserReceiver.setVisibility(View.GONE);
+                holder.layoutBodyReceiver.setVisibility(View.GONE);
+
+                holder.commentBodySender.setText(comment.getContent());
                 Glide.with(mActivity).load(user.getAvatar())
                         .error(R.drawable.icon_user_gray)
                         .placeholder(R.drawable.icon_user_gray)
-                        .into(holder.imgUser);
+                        .into(holder.imgUserSender);
 
             }else{
                 if(comment.getIdUser()==userAdmin.getId()){
-                    holder.body.setText(comment.getContent());
-                    holder.infoUser.setText(userAdmin.getFullName()+" "+comment.getTime_cmt());
-                    Glide.with(mActivity).load(userAdmin.getAvatar())
-                            .error(R.drawable.icon_user_gray)
-                            .placeholder(R.drawable.icon_user_gray)
-                            .into(holder.imgUser);
+                    holder.cvUserSender.setVisibility(View.GONE);
+                    holder.layoutBodySender.setVisibility(View.GONE);
+                    holder.cvUserReceiver.setVisibility(View.VISIBLE);
+                    holder.layoutBodyReceiver.setVisibility(View.VISIBLE);
 
+                    holder.commentBodyReceiver.setText(comment.getContent());
+                    Glide.with(mActivity).load(userAdmin.getAvatar())
+                            .error(R.drawable.img_notify)
+                            .placeholder(R.drawable.img_notify)
+                            .into(holder.imgUserReceiver);
                 }
             }
         }
@@ -119,16 +140,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imgUser,icDelete;
-        private LinearLayout layout_comment;
-        private TextView infoUser, body;
+        private ImageView imgUserReceiver,imgUserSender;
+        private CardView cvUserReceiver,cvUserSender;
+        private ConstraintLayout layoutBodyReceiver,layoutBodySender;
+        private TextView commentBodyReceiver,commentBodySender;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
-            icDelete=itemView.findViewById(R.id.ic_delete);
-            imgUser=itemView.findViewById(R.id.ivuser);
-            infoUser=itemView.findViewById(R.id.name_user);
-            body=itemView.findViewById(R.id.body_commnet);
+            imgUserReceiver=itemView.findViewById(R.id.ivuser_receive);
+            imgUserSender=itemView.findViewById(R.id.ivuser_send);
+            cvUserReceiver=itemView.findViewById(R.id.cardView1);
+            cvUserSender=itemView.findViewById(R.id.cardView2);
+            layoutBodyReceiver=itemView.findViewById(R.id.layout_receiver);
+            layoutBodySender=itemView.findViewById(R.id.layout_sender);
+            commentBodyReceiver=itemView.findViewById(R.id.body_commnet_receive);
+            commentBodySender=itemView.findViewById(R.id.body_commnet_send);
 
         }
     }

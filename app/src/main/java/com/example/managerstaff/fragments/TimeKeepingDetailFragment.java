@@ -103,8 +103,8 @@ public class TimeKeepingDetailFragment extends Fragment {
                         binding.txtNumberHourWorking.setText(String.valueOf(Support.getNumberWorking(userS,timeDay)));
                         binding.txtWageOfDay.setText(Support.formatWage(String.valueOf((int)Support.getWageOfDay(userS,timeDay,setting,nameDay)))+" "+getString(R.string.VND));
                         binding.txtCoefficientWageOvertime.setText(String.valueOf(setting.getOvertime()));
-                        binding.txtTimeStartWorking.setText(setting.getTimeStart());
-                        binding.txtTimeEndWorking.setText(setting.getTimeEnd());
+                        binding.txtTimeStartWorking.setText(setting.getTimeStart().substring(0,setting.getTimeStart().length()-3));
+                        binding.txtTimeEndWorking.setText(setting.getTimeEnd().substring(0,setting.getTimeEnd().length()-3));
 
                     }else{
                         Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();

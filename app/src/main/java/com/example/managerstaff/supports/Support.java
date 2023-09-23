@@ -4,6 +4,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.managerstaff.models.Comment;
+import com.example.managerstaff.models.Post;
 import com.example.managerstaff.models.Setting;
 import com.example.managerstaff.models.StatisticalTimeUser;
 import com.example.managerstaff.models.User;
@@ -31,6 +33,15 @@ public class Support {
         boolean containsSpecialChar = matcher.matches();
         boolean containsLetterOrDigit = password.matches(".*[a-zA-Z0-9].*");
         if(containsSpecialChar && containsLetterOrDigit) return true;
+        return false;
+    }
+
+    public static boolean checkCommentOfUser(Post post, int idUser){
+        List<Comment> list=new ArrayList<>();
+        boolean check=false;
+        for(int i=0;i<post.getListComments().size();i++){
+            if(post.getListComments().get(i).getIdUser()==idUser) return true;
+        }
         return false;
     }
 
@@ -77,6 +88,26 @@ public class Support {
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         return list;
+    }
+
+    public static int compareToDate(String timeStart,String timeEnd){
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date startDate = dateFormat.parse(timeStart);
+            Date endDate = dateFormat.parse(timeEnd);
+
+            if (startDate.compareTo(endDate)==0) {
+                return 0;
+            }else{
+                if (startDate.compareTo(endDate)<0) {
+                    return -1;
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
     public static String changeReverDateTime(String inputDate,boolean reverse){
@@ -173,6 +204,87 @@ public class Support {
 
         return wage;
 
+    }
+
+    public static List<String> getListTypePost(List<Post> listPosts){
+        List<String> listType=new ArrayList<>();
+        listType.add("Tất cả");
+        boolean check=false;
+        for(int i=0;i<listPosts.size();i++){
+            check=false;
+            for(int j=0;j<listType.size();j++){
+                if(listType.get(j).equals(listPosts.get(i).getTypePost())){
+                    check=true;
+                    break;
+                }
+            }
+            if(check) continue;
+            listType.add(listPosts.get(i).getTypePost());
+        }
+        return listType;
+    }
+
+    public static boolean checkEqualsString(String parent,String str){
+        for(int i=0;i<parent.length()-str.length()+1;i++){
+            if(parent.substring(i,i+str.length()).equalsIgnoreCase(str)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getFormatString(int day, int month, int year){
+        return ((day<10)?"0":"")+day+"-"+((month<10)?"0":"")+month+"-"+year;
+    }
+
+    public static boolean checkIsWithinApprox(String timeStart,String timeEnd,String time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            Date startDate = dateFormat.parse(timeStart);
+            Date endDate = dateFormat.parse(timeEnd);
+            Date checkDate = dateFormat.parse(time);
+
+            if (checkDate.compareTo(startDate) >= 0 && checkDate.compareTo(endDate) <= 0) {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static List<Post> filterPost(List<Post> listPosts, String timeStart, String timeEnd, String type){
+        if(timeStart.length()==0 || timeEnd.length()==0 || type.length()==0) return  listPosts;
+        List<Post> list=new ArrayList<>();
+        for(int i=0;i<listPosts.size();i++){
+            if((listPosts.get(i).getTypePost().equals(type)||type.equals("Tất cả")) && checkIsWithinApprox(timeStart,timeEnd,listPosts.get(i).getTimePost().substring(0,10)) ){
+                list.add(listPosts.get(i));
+            }
+        }
+        return list;
+    }
+
+    public static List<Post> searchListPosts(List<Post> list,String keysearch){
+        if(keysearch.length()==0) return list;
+        List<Post>listPostSearchs=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if(Support.checkEqualsString(list.get(i).getHeaderPost(),keysearch)){
+                listPostSearchs.add(list.get(i));
+            }
+        }
+        return listPostSearchs;
+    }
+
+    public static String geDayNow(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        String timeNow=dateFormat.format(cal.getTime());
+        return timeNow;
+    }
+
+    public static String defineTime(String time){
+        String str[]=time.split("-");
+        return "Ngày " +str[0]+" Tháng "+str[1];
     }
 
 }

@@ -1,6 +1,9 @@
 package com.example.managerstaff.api;
 
+import com.example.managerstaff.models.responses.CommentResponse;
+import com.example.managerstaff.models.responses.ListCalendarResponse;
 import com.example.managerstaff.models.responses.ListPostResponse;
+import com.example.managerstaff.models.responses.ListUserResponse;
 import com.example.managerstaff.models.responses.ObjectResponse;
 import com.example.managerstaff.models.responses.PostResponse;
 import com.example.managerstaff.models.responses.SettingResponse;
@@ -16,7 +19,7 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    ApiService apiService = ApiConfig.getClient("http://192.168.12.100:8000")
+    ApiService apiService = ApiConfig.getClient("http:/192.168.11.100:8000")
             .create(ApiService.class);
 
 
@@ -57,10 +60,18 @@ public interface ApiService {
                                       @Query("time_feedback") String timeFeedback,
                                       @Query("content") String content);
 
-    @POST("/api/feedback/add_feedback/{id}")
-    Call<ObjectResponse> addComment(@Path("id") int id,
-                                      @Query("time_feedback") String timeFeedback,
-                                      @Query("content") String content);
+    @POST("/api/comment/add_comment/{idu}/{idp}")
+    Call<CommentResponse> addComment(@Path("idu") int idUser,
+                                     @Path("idp") int idPart,
+                                     @Query("time_cmt") String timeComment,
+                                     @Query("content") String content);
+
+    @GET("/api/calendar/list_calender_by_part/{id}")
+    Call<ListCalendarResponse> getCalendar(@Path("id") int idPart,
+                                           @Query("day_calendar") String dayCalendar);
+
+    @GET("/api/user/all_user")
+    Call<ListUserResponse> getListUser();
 
     @GET("/api/post/post_detail/{id}")
     Call<PostResponse> getPostDetail(@Path("id") int id);

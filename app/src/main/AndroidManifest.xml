@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,6 +19,19 @@
         android:theme="@style/Theme.ManagerStaff"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.NewsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activities.TimeKeepingActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.FeedBackActivity"
             android:exported="false" />

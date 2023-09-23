@@ -36,7 +36,7 @@
                     android:id="@+id/txt_type_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/feedback"
+                    android:text="@string/reply_technique"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"

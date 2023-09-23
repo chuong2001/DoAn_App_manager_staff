@@ -7,7 +7,8 @@
     <string name="username_or_password_not_empty">Bạn cần nhập đủ thông tin.</string>
     <string name="home">Trang chủ</string>
     <string name="timekeeping">Chấm công</string>
-    <string name="calendar">Lịch</string>
+    <string name="utilities">Tiện ích</string>
+    <string name="calendarA">Lịch</string>
     <string name="news">Tin tức</string>
     <string name="user">Cá nhân</string>
     <string name="function">Chức năng</string>
@@ -45,6 +46,7 @@
     <string name="detail_work_day">Chi tiết ngày làm việc</string>
     <string name="change_password">Đổi mật khẩu</string>
     <string name="reply">Phản hồi</string>
+    <string name="reply_technique">Phản hồi kỹ thuật</string>
     <string name="logout">Đăng xuất</string>
     <string name="infomation_app">Thông tin ứng dụng</string>
     <string name="edit">Sửa</string>
@@ -71,6 +73,8 @@
     <string name="username">Tài khoản</string>
     <string name="time">Thời gian</string>
     <string name="rank">Thứ</string>
+    <string name="header_calendar">Header</string>
+    <string name="body_calendar">Body</string>
     <string name="day">Ngày</string>
     <string name="question_answer">Hỏi &amp; Đáp</string>
     <string name="enter_content">Nhập câu hỏi</string>
@@ -80,6 +84,16 @@
     <string name="update_success">Cập nhật thành công</string>
     <string name="not_exist">Not exist</string>
     <string name="timesheets">Bảng chấm công</string>
+    <string name="calendar_detail">Chi tiết lịch</string>
+    <string name="header_calendar_detail">Tên sự kiện:</string>
+    <string name="type_calendar">Loại sự kiện:</string>
+    <string name="address1">Địa điểm:</string>
+    <string name="day1">Ngày:</string>
+    <string name="time_start">Thời gian bắt đầu:</string>
+    <string name="time_end">Thời gian kết thúc:</string>
+    <string name="body_calender">Nội dung:</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="manager_time_keeping">Quản lý chấm công</string>
     <string name="monday">Thứ hai</string>
     <string name="tuesday">Thứ ba</string>
     <string name="wednesday">Thứ tư</string>
