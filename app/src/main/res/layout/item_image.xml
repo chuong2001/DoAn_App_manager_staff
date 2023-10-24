@@ -5,7 +5,7 @@
     android:id="@+id/layout_item_image"
     android:foreground="@drawable/animation_click"
     android:layout_marginBottom="20dp"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <ImageView

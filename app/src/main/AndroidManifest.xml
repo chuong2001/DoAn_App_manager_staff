@@ -12,15 +12,35 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logoapp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logoapp"
         android:supportsRtl="true"
         android:theme="@style/Theme.ManagerStaff"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activities.CommentActivity"
+            android:name=".activities.ForgotPasswordActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddCalendarActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activities.ManagerFeedBackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ManagerUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ShowImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ListChatActivity"
             android:exported="false" />
         <activity
             android:name=".activities.NewsActivity"

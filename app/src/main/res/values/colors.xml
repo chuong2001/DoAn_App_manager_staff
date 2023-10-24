@@ -3,7 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#6C6C6C</color>
-    <color name="gray3">#4B000000</color>
+    <color name="gray3">#61000000</color>
     <color name="gray1">#878787</color>
     <color name="gray2">#EDEDED</color>
     <color name="background">#FABAA8</color>
@@ -13,6 +13,7 @@
     <color name="blue_back_right">#F200A6FF</color>
     <color name="blue_shadow">#09223A</color>
     <color name="blue_1">#76ACE1</color>
+    <color name="blue_2">#BEDFFF</color>
     <color name="blue_1_shadow">#4F6478</color>
     <color name="orange_background">#FABAA8</color>
     <color name="title">#F4977D</color>

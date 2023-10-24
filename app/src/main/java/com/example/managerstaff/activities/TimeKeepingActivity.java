@@ -40,7 +40,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
     ActivityTimeKeepingBinding binding;
     private int month = 0;
     private int year = 0;
-    private int IdUser;
+    private int IdUser,IdAdmin,IdUserWatch;
     private User user;
     private Setting setting;
     private TimeKeepingAdapter adapter;
@@ -52,6 +52,8 @@ public class TimeKeepingActivity extends AppCompatActivity {
         binding = ActivityTimeKeepingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         IdUser = getIntent().getIntExtra("id_user", 0);
+        IdAdmin = getIntent().getIntExtra("id_admin", 0);
+        IdUserWatch = getIntent().getIntExtra("id_user_watch", 0);
         user = new User();
         setting = new Setting();
         adapter = new TimeKeepingAdapter(this);
@@ -103,8 +105,8 @@ public class TimeKeepingActivity extends AppCompatActivity {
             if (i <= year) positionYear++;
         }
 
-        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, months);
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, years);
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, R.layout.item_spinner, months);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this,  R.layout.item_spinner, years);
 
         monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -192,16 +194,23 @@ public class TimeKeepingActivity extends AppCompatActivity {
     }
 
     private void clickCallApiGetTimeUser(String start_day, String end_day) {
-        ApiService.apiService.getTimeKeeping(IdUser, start_day, end_day).enqueue(new Callback<UserResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getTimeKeeping(Support.getAuthorization(this),IdUserWatch, start_day, end_day).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
                 if (userResponse != null) {
                     if (userResponse.getCode() == 200) {
                         user = userResponse.getUser();
+                        binding.txtNameUser.setText(user.getFullName());
+                        binding.txtPositionUser.setText(user.getPosition().getNamePosition());
                         clickCallApiGetSetting(user);
-                    } else {
-                        Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                    } else{
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(TimeKeepingActivity.this);
+                        }else{
+                            Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
@@ -213,10 +222,12 @@ public class TimeKeepingActivity extends AppCompatActivity {
                 Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     private void clickCallApiGetSetting(User userS) {
-        ApiService.apiService.getSetting().enqueue(new Callback<SettingResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getSetting(Support.getAuthorization(this)).enqueue(new Callback<SettingResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<SettingResponse> call, Response<SettingResponse> response) {
@@ -248,8 +259,12 @@ public class TimeKeepingActivity extends AppCompatActivity {
                         binding.txtSomeHolidays.setText(countDayOff + "");
                         adapter.setData(statisticalTimeUserList);
                         binding.rcvListMonth.setAdapter(adapter);
-                    } else {
-                        Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                    } else{
+                        if(settingResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(TimeKeepingActivity.this);
+                        }else{
+                            Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
@@ -261,6 +276,7 @@ public class TimeKeepingActivity extends AppCompatActivity {
                 Toast.makeText(TimeKeepingActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     public void finish() {

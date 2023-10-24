@@ -5,9 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="@drawable/animation_click"
+    android:id="@+id/cv_item_post"
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="15dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_delete"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/red">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="Xoá"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/img_delete"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_delete"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/icon_delete_cus"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_item_post"
         android:layout_width="match_parent"

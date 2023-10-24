@@ -8,7 +8,7 @@
     <style name="Theme.ManagerStaff" parent="Base.Theme.ManagerStaff" />
 
     <style name="white">
-        <item name="colorAccent">#FFFFFF</item> <!-- Whatever color you want-->
+        <item name="colorAccent">@color/blue</item> <!-- Whatever color you want-->
     </style>
 
     <style name="gray">

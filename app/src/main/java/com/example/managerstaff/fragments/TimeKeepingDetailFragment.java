@@ -64,7 +64,8 @@ public class TimeKeepingDetailFragment extends Fragment {
     }
 
     private void clickCallApiGetTimeUser(String start_day,String end_day) {
-        ApiService.apiService.getTimeKeeping(IdUser,start_day,end_day).enqueue(new Callback<UserResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getTimeKeeping(Support.getAuthorization(requireActivity()),IdUser,start_day,end_day).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
@@ -76,10 +77,14 @@ public class TimeKeepingDetailFragment extends Fragment {
                         binding.rcvListTime.setAdapter(adapter);
                         clickCallApiGetSetting(user);
                     }else{
-                        Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(requireActivity());
+                        }else{
+                            Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -88,10 +93,12 @@ public class TimeKeepingDetailFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     private void clickCallApiGetSetting(User userS) {
-        ApiService.apiService.getSetting().enqueue(new Callback<SettingResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getSetting(Support.getAuthorization(requireActivity())).enqueue(new Callback<SettingResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<SettingResponse> call, Response<SettingResponse> response) {
@@ -107,10 +114,14 @@ public class TimeKeepingDetailFragment extends Fragment {
                         binding.txtTimeEndWorking.setText(setting.getTimeEnd().substring(0,setting.getTimeEnd().length()-3));
 
                     }else{
-                        Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(settingResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(requireActivity());
+                        }else{
+                            Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -119,5 +130,6 @@ public class TimeKeepingDetailFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 }

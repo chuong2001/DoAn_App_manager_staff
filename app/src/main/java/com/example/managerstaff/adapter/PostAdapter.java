@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +23,7 @@ import com.example.managerstaff.models.Post;
 import com.example.managerstaff.models.TimeIn;
 import com.example.managerstaff.models.TimeOut;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
@@ -29,18 +31,47 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     private List<Post> listPosts;
 
-    private int IdUser;
+    private int IdUser,IdAdmin;
+    private int p;
 
     public PostAdapter(Activity mActivity) {
+
         this.mActivity = mActivity;
+    }
+
+    public void setP(int p) {
+        this.p = p;
     }
 
     public void setIdUser(int IdUser){
         this.IdUser=IdUser;
     }
 
+    public void setIdAdmin(int idAdmin) {
+        IdAdmin = idAdmin;
+    }
+
+    public List<Post> getListPosts() {
+        return listPosts;
+    }
+
     public void setData(List<Post> listPosts){
         this.listPosts=listPosts;
+        notifyDataSetChanged();
+    }
+
+    public void removeData(Post post){
+        this.listPosts.remove(post);
+        notifyDataSetChanged();
+    }
+
+    public void addAllData(List<Post> listPosts){
+        this.listPosts.addAll(listPosts);
+        notifyDataSetChanged();
+    }
+
+    public void resetData(){
+        this.listPosts=new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -63,7 +94,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     .error(R.drawable.img_notify)
                     .placeholder(R.drawable.img_notify)
                     .into(holder.imgPost);
-            holder.txtTitlePost.setText(post.getTypePost());
+            holder.txtTitlePost.setText(post.getTypePost().getTypeName());
             holder.txtBodyPost.setText(post.getHeaderPost());
             holder.txtTimePost.setText(post.getTimePost());
             holder.layoutItemPost.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +103,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     Intent intent=new Intent(mActivity, PostDetailActivity.class);
                     Bundle bndlanimation = ActivityOptions.makeCustomAnimation(mActivity, R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
                     intent.putExtra("id_user",IdUser);
+                    intent.putExtra("id_admin",IdAdmin);
+                    intent.putExtra("position",3);
                     intent.putExtra("id_post",post.getIdPost());
                     mActivity.startActivity(intent,bndlanimation);
                 }
@@ -89,7 +122,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public class  PostViewHolder extends RecyclerView.ViewHolder{
         private TextView txtTitlePost,txtBodyPost,txtTimePost;
         private ImageView imgPost;
-        private ConstraintLayout layoutItemPost;
+        private CardView layoutItemPost;
+        public View layoutItem;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,8 +131,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             txtTitlePost = itemView.findViewById(R.id.txt_title_post);
             txtBodyPost = itemView.findViewById(R.id.txt_body_post);
             txtTimePost = itemView.findViewById(R.id.txt_day_create_post);
-            layoutItemPost=itemView.findViewById(R.id.layout_item_post);
-
+            layoutItemPost=itemView.findViewById(R.id.cv_item_post);
+            layoutItem=itemView.findViewById(R.id.layout_item_post);
         }
     }
 }

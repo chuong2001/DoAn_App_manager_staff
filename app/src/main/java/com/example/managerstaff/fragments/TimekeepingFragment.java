@@ -98,8 +98,8 @@ public class TimekeepingFragment extends Fragment {
             if(i<=year) positionYear++;
         }
 
-        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, months);
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, years);
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(requireContext(),  R.layout.item_spinner, months);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(requireContext(),  R.layout.item_spinner, years);
 
         monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -188,7 +188,8 @@ public class TimekeepingFragment extends Fragment {
     }
 
     private void clickCallApiGetTimeUser(String start_day,String end_day) {
-        ApiService.apiService.getTimeKeeping(IdUser,start_day,end_day).enqueue(new Callback<UserResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getTimeKeeping(Support.getAuthorization(requireActivity()),IdUser,start_day,end_day).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
@@ -197,10 +198,14 @@ public class TimekeepingFragment extends Fragment {
                         user=userResponse.getUser();
                         clickCallApiGetSetting(user);
                     }else{
-                        Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(requireActivity());
+                        }else{
+                            Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -209,10 +214,12 @@ public class TimekeepingFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     private void clickCallApiGetSetting(User userS) {
-        ApiService.apiService.getSetting().enqueue(new Callback<SettingResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getSetting(Support.getAuthorization(requireActivity())).enqueue(new Callback<SettingResponse>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<SettingResponse> call, Response<SettingResponse> response) {
@@ -244,10 +251,14 @@ public class TimekeepingFragment extends Fragment {
                         adapter.setData(statisticalTimeUserList);
                         binding.rcvListMonth.setAdapter(adapter);
                     }else{
-                        Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(settingResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(requireActivity());
+                        }else{
+                            Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -256,6 +267,7 @@ public class TimekeepingFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
 }

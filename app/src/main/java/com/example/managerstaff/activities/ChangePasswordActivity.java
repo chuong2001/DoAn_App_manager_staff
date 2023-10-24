@@ -1,7 +1,10 @@
 package com.example.managerstaff.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +33,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     ActivityChangePasswordBinding binding;
     private int IdUser;
+    private String action;
     private User user;
     private boolean isShowPass=false,isShowPassNew=false,isShowPassConfirm=false,checkEmptyPassOld=false,checkEmptyPassNew=false,checkEmptyConfirm=false;
     @Override
@@ -38,7 +42,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         binding=ActivityChangePasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         IdUser = getIntent().getIntExtra("id_user", 0);
+        action=getIntent().getStringExtra("action");
         user=new User();
+        if(action.equals("forgot")){
+            binding.layoutPasswordOld.setVisibility(View.GONE);
+        }
         clickCallApiGetUserDetail();
         onEventClick();
 
@@ -145,7 +153,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 if (binding.edtPasswordNew.getText().toString().trim().length() > 0) {
                     if (Support.checkPassValidate(binding.edtPasswordNew.getText().toString().trim())) {
                         checkEmptyPassNew = true;
-                        if (checkEmptyConfirm && checkEmptyPassOld && checkEmptyPassNew) {
+                        if (checkEmptyConfirm &&  (checkEmptyPassOld || action.equals("forgot")) && checkEmptyPassNew) {
                             setButtonLight();
                         }
                         binding.txtWarning2.setVisibility(View.GONE);
@@ -185,7 +193,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 if(binding.edtConfirmPassword.getText().toString().length()>0){
                     if(binding.edtConfirmPassword.getText().toString().equals(binding.edtPasswordNew.getText().toString())) {
                         checkEmptyConfirm = true;
-                        if (checkEmptyConfirm && checkEmptyPassOld && checkEmptyPassNew) {
+                        if (checkEmptyConfirm &&  (checkEmptyPassOld || action.equals("forgot")) && checkEmptyPassNew) {
                             setButtonLight();
                         }
                         binding.txtWarning3.setVisibility(View.GONE);
@@ -210,11 +218,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
 
         binding.btnChangePassword.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                if(checkEmptyConfirm && checkEmptyPassOld && checkEmptyPassNew){
-                    if(binding.edtPasswordOld.getText().toString().equals(user.getAccount().getPassword())){
-                        binding.pbLoad.setVisibility(View.VISIBLE);
+                if(checkEmptyConfirm && (checkEmptyPassOld || action.equals("forgot")) && checkEmptyPassNew){
+                    if((binding.edtPasswordOld.getText().toString().equals(Support.decryptPassword(user.getAccount().getPassword()))|| action.equals("forgot"))){
                         clickCallApiChangePassword();
                     }else{
                         binding.txtWarning1.setVisibility(View.VISIBLE);
@@ -234,32 +242,37 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void clickCallApiGetUserDetail() {
-        ApiService.apiService.getUserDetail(IdUser).enqueue(new Callback<UserResponse>() {
+        ApiService.apiService.getUserDetail(Support.getAuthorization(this),IdUser).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
-                binding.pbLoad.setVisibility(View.GONE);
                 if (userResponse != null) {
                     if(userResponse.getCode()==200){
                         user=userResponse.getUser();
                         binding.txtFullName.setText(user.getFullName());
                     }else{
-                        Toast.makeText(ChangePasswordActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
-                        finish();
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(ChangePasswordActivity.this);
+                        }else{
+                            Toast.makeText(ChangePasswordActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
+                } else {
+                    Toast.makeText(ChangePasswordActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                binding.pbLoad.setVisibility(View.GONE);
                 Toast.makeText(ChangePasswordActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void clickCallApiChangePassword() {
-        ApiService.apiService.changePassword(IdUser,binding.edtPasswordNew.getText().toString()).enqueue(new Callback<UserResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.changePassword(Support.getAuthorization(this),IdUser,Support.passwordEncryption(binding.edtPasswordNew.getText().toString())).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
@@ -267,10 +280,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     if(userResponse.getCode()==200){
                         user=userResponse.getUser();
                         Toast.makeText(ChangePasswordActivity.this, getString(R.string.update_success), Toast.LENGTH_SHORT).show();
-                        finish();
+                        if(action.equals("forgot")){
+                            Intent intent=new Intent(ChangePasswordActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }else {
+                            finish();
+                        }
                     }else{
-                        Toast.makeText(ChangePasswordActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(ChangePasswordActivity.this);
+                        }else{
+                            Toast.makeText(ChangePasswordActivity.this, getString(R.string.update_false), Toast.LENGTH_SHORT).show();
+                        }
                     }
+                } else {
+                    Toast.makeText(ChangePasswordActivity.this, getString(R.string.update_false), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -279,6 +303,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 Toast.makeText(ChangePasswordActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     public void finish() {

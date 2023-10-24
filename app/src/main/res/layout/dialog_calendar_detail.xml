@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialog_calendar_detail"
-    android:layout_width="380dp"
+    android:layout_width="300dp"
     android:layout_height="520dp"
     android:background="@drawable/botron_edittext1"
     android:padding="20dp">

@@ -3,6 +3,8 @@ package com.example.managerstaff.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 import javax.annotation.Generated;
 
 @Generated("jsonschema2pojo")
@@ -16,14 +18,26 @@ public class Part {
     @SerializedName("describe_part")
     @Expose
     private String describePart;
+    @SerializedName("calendars")
+    @Expose
+    private ArrayList<CalendarA> listCalendars;
 
     public Part() {
     }
 
-    public Part(int idPart, String namePart, String describePart) {
+    public Part(int idPart, String namePart, String describePart, ArrayList<CalendarA> listCalendars) {
         this.idPart = idPart;
         this.namePart = namePart;
         this.describePart = describePart;
+        this.listCalendars = listCalendars;
+    }
+
+    public ArrayList<CalendarA> getListCalendars() {
+        return listCalendars;
+    }
+
+    public void setListCalendars(ArrayList<CalendarA> listCalendars) {
+        this.listCalendars = listCalendars;
     }
 
     public int getIdPart() {

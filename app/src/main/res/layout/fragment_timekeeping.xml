@@ -73,7 +73,7 @@
 
             <Spinner
                 android:id="@+id/sp_month"
-                android:layout_width="100dp"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
@@ -91,6 +91,7 @@
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/sp_month"
                 app:layout_constraintStart_toStartOf="@+id/sp_month"
                 app:layout_constraintTop_toTopOf="@+id/sp_month" />
@@ -119,7 +120,7 @@
 
             <Spinner
                 android:id="@+id/sp_year"
-                android:layout_width="100dp"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/border_outline_round"
@@ -136,6 +137,7 @@
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/sp_year"
                 app:layout_constraintStart_toStartOf="@+id/sp_year"
                 app:layout_constraintTop_toTopOf="@+id/sp_year" />
@@ -413,5 +415,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/pb_load_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:theme="@style/white"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.example.managerstaff.activities;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,13 +11,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.managerstaff.R;
 import com.example.managerstaff.api.ApiService;
 import com.example.managerstaff.databinding.ActivityLoginBinding;
+import com.example.managerstaff.models.User;
+import com.example.managerstaff.models.responses.ObjectResponse;
 import com.example.managerstaff.models.responses.UserResponse;
+import com.example.managerstaff.supports.Database;
+import com.example.managerstaff.supports.MyForegroundService;
+import com.example.managerstaff.supports.Support;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import retrofit2.Call;
@@ -27,13 +34,15 @@ public class LoginActivity extends AppCompatActivity {
 
     ActivityLoginBinding binding;
     private boolean isShowPass=false,checkUsername=false,checkPassword=false;
+    Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        database=new Database(this);
+        clickCallApiCheckToken();
         if(binding.edtPassword.getText().toString().length()>0){
             checkPassword=true;
         }
@@ -117,7 +126,17 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        binding.txtForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(LoginActivity.this, R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
+                startActivity(intent,bndlanimation);
+            }
+        });
+
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 if(checkPassword && checkUsername) {
@@ -152,25 +171,68 @@ public class LoginActivity extends AppCompatActivity {
         binding.btnLogin.setBackgroundDrawable(getDrawable(R.drawable.button_cus));
     }
 
-    private void clickCallApiLogin(String username,String password) {
-        ApiService.apiService.loginUser(username,password).enqueue(new Callback<UserResponse>() {
+    private void clickCallApiCheckToken() {
+        String data= database.getSessionAuthorization();
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.checkToken(data).enqueue(new Callback<ObjectResponse>() {
             @Override
-            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                UserResponse userResponse = response.body();
-                if (userResponse != null) {
-                    if(userResponse.getCode()==200){
-                        Intent intent=new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("id_user",userResponse.getUser().getId());
-                        intent.putExtra("is_admin",(username.equalsIgnoreCase("admin"))?1:0);
+            public void onResponse(Call<ObjectResponse> call, Response<ObjectResponse> response) {
+                ObjectResponse objectResponse = response.body();
+                if (objectResponse != null) {
+                    if(objectResponse.getCode()==200){
+                        if(objectResponse.getMessage().equals("Success")) {
+                            int IdAdmin=(Integer.parseInt(objectResponse.getData().split(" ")[1])==1)?Integer.parseInt(objectResponse.getData().split(" ")[0]):0;
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("id_user", Integer.parseInt(objectResponse.getData().split(" ")[0]));
+                            intent.putExtra("id_admin", IdAdmin);
+                            intent.putExtra("position", 0);
+                            startActivity(intent);
+                            finish();
+                        }else{
+                            database.deleteSession(data);
+                        }
+                    }else{
+                        database.deleteSession(data);
+                    }
+                }else{
+                    database.deleteSession(data);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ObjectResponse> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.pbLoadData.setVisibility(View.GONE);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void clickCallApiLogin(String username, String password) {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.loginUser(username, Support.passwordEncryption(password)).enqueue(new Callback<ObjectResponse>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(Call<ObjectResponse> call, Response<ObjectResponse> response) {
+                ObjectResponse objectResponse = response.body();
+                if (objectResponse != null) {
+                    if (objectResponse.getCode() == 200) {
+                        int IdAdmin=(Integer.parseInt(objectResponse.getData().split(" ")[1])==1)?Integer.parseInt(objectResponse.getData().split(" ")[0]):0;
+                        database.insertAuthorization(objectResponse.getData().split(" ")[2]);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("id_user", Integer.parseInt(objectResponse.getData().split(" ")[0]));
+                        intent.putExtra("id_admin", IdAdmin);
+                        intent.putExtra("position", 0);
+                        binding.pbLoadData.setVisibility(View.GONE);
                         startActivity(intent);
                         finish();
-                    }else{
-                        if(userResponse.getMessage().equals(getString(R.string.not_exist))){
+                    } else {
+                        if (objectResponse.getMessage().equals(getString(R.string.not_exist))) {
                             binding.txtUsername.setTextColor(getColor(R.color.red));
                             binding.edtUsername.setBackgroundDrawable(getDrawable(R.drawable.border_outline_round_red));
                             binding.txtWarning.setVisibility(View.VISIBLE);
                             binding.txtWarning.setText(getString(R.string.not_exist_account));
-                        }else{
+                        } else {
                             binding.txtPassword.setTextColor(getColor(R.color.red));
                             binding.edtPassword.setBackgroundDrawable(getDrawable(R.drawable.border_outline_round_red));
                             binding.txtWarning1.setVisibility(View.VISIBLE);
@@ -181,9 +243,10 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<UserResponse> call, Throwable t) {
+            public void onFailure(Call<ObjectResponse> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 }

@@ -17,6 +17,7 @@
             android:id="@+id/img_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:foreground="@drawable/animation_click"
             android:layout_marginStart="20dp"
             android:src="@drawable/icon_back_left"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -386,5 +387,14 @@
         </RelativeLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/pb_load_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:theme="@style/white"
+        android:visibility="gone" />
 
 </RelativeLayout>

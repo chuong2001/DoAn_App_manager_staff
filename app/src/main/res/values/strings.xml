@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ManagerStaff</string>
+    <string name="app_name">Attendance</string>
     <string name="forgot_your_password">Quên mật khẩu?</string>
     <string name="login">Đăng nhập</string>
     <string name="remember_me">Ghi nhớ đăng nhập</string>
@@ -8,6 +8,7 @@
     <string name="home">Trang chủ</string>
     <string name="timekeeping">Chấm công</string>
     <string name="utilities">Tiện ích</string>
+    <string name="you">Bạn</string>
     <string name="calendarA">Lịch</string>
     <string name="news">Tin tức</string>
     <string name="user">Cá nhân</string>
@@ -16,6 +17,7 @@
     <string name="date_time">dd-mm-yyyy</string>
     <string name="header_post">Header post</string>
     <string name="posistion">Chức vụ</string>
+    <string name="post">Bản tin</string>
     <string name="wage">Lương</string>
     <string name="time_start_working">Thời gian bắt đầu làm</string>
     <string name="time_end_working">Thời gian tan làm</string>
@@ -43,6 +45,7 @@
     <string name="coefficient_wage_overtime">Hệ số lương tăng ca</string>
     <string name="some_holidays">Số ngày nghỉ</string>
     <string name="infomation_user">Thông tin cá nhân</string>
+    <string name="list_feedback">Danh sách phản hồi</string>
     <string name="detail_work_day">Chi tiết ngày làm việc</string>
     <string name="change_password">Đổi mật khẩu</string>
     <string name="reply">Phản hồi</string>
@@ -68,6 +71,9 @@
     <string name="wrong_password">Sai mật khẩu. Hãy thử lại.</string>
     <string name="no_empty">Không được để trống</string>
     <string name="system_error">Hệ thống bị lỗi</string>
+    <string name="get_data_error">Lỗi lấy dữ liệu</string>
+    <string name="delete_success">Xoá thành công</string>
+    <string name="delete_false">Xoá không thành công</string>
     <string name="password_new">Mật khẩu mới</string>
     <string name="password">Mật khẩu</string>
     <string name="username">Tài khoản</string>
@@ -77,12 +83,19 @@
     <string name="body_calendar">Body</string>
     <string name="day">Ngày</string>
     <string name="question_answer">Hỏi &amp; Đáp</string>
+    <string name="add_post">Tạo bản tin</string>
+    <string name="add_calendar">Thêm sự kiện</string>
+    <string name="add_user">Thêm nhân viên</string>
+    <string name="calendar">Sự kiện</string>
+    <string name="enter_header_post">Nhập tiêu đề của bản tin (không quá 100 ký tự)*</string>
     <string name="enter_content">Nhập câu hỏi</string>
+    <string name="enter_content_post">Nhập nội dung cho bản tin</string>
     <string name="number_of_working_days">Số ngày đi làm</string>
     <string name="password_confirm">Xác nhận mật khẩu</string>
     <string name="password_incorrect">Mật khẩu không khớp</string>
     <string name="update_success">Cập nhật thành công</string>
     <string name="not_exist">Not exist</string>
+    <string name="exist">Tài khoản đã tồn tại</string>
     <string name="timesheets">Bảng chấm công</string>
     <string name="calendar_detail">Chi tiết lịch</string>
     <string name="header_calendar_detail">Tên sự kiện:</string>
@@ -93,6 +106,7 @@
     <string name="time_end">Thời gian kết thúc:</string>
     <string name="body_calender">Nội dung:</string>
     <string name="search">Tìm kiếm</string>
+    <string name="manager_user">Quản lý nhân viên</string>
     <string name="manager_time_keeping">Quản lý chấm công</string>
     <string name="monday">Thứ hai</string>
     <string name="tuesday">Thứ ba</string>

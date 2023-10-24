@@ -3,26 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp"
+    android:id="@+id/layout_item_comment"
+    android:layout_marginTop="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_space"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_name_user_receiver"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_space_sender"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_name_user_sender"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView1"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
         android:visibility="visible"
         app:cardCornerRadius="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivuser_receive"
-            android:src="@drawable/img_notify"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_notify" />
 
     </androidx.cardview.widget.CardView>
 
@@ -30,12 +46,11 @@
         android:id="@+id/cardView2"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        app:cardCornerRadius="32dp"
-        android:visibility="visible"
         android:layout_marginRight="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:visibility="visible"
+        app:cardCornerRadius="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivuser_send"
@@ -46,22 +61,33 @@
 
     </androidx.cardview.widget.CardView>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_name_user_receiver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="Nguyen Dang Chuong"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_receiver"
+        app:layout_constraintStart_toStartOf="@+id/layout_receiver" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_receiver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="50dp"
         android:background="@drawable/botron_edittext_gray"
         android:maxWidth="300dp"
         android:padding="10dp"
         android:visibility="visible"
         app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cardView1"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/cardView1">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/body_commnet_receive"
@@ -71,29 +97,41 @@
             android:text="Video rất hay"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_name_user_sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="Nguyen Dang Chuong"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_sender"
+        app:layout_constraintEnd_toEndOf="@+id/layout_sender" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintHorizontal_bias="1"
-        android:maxWidth="300dp"
-        android:visibility="visible"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/botron_edittext_blue"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp"
+        android:foreground="@drawable/animation_click"
+        android:maxWidth="300dp"
         android:padding="10dp"
+        android:visibility="visible"
         app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/body_commnet_send"
@@ -101,9 +139,9 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:maxWidth="280dp"
-            android:textSize="16sp"
-            android:text="Video rất hay lkjslkfjklsdflsdkfjdklsfsdkllksdfksdlklsdfjklsdfksdjflksdfsk"
+            android:text="Video rất hay "
             android:textColor="@color/white"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"

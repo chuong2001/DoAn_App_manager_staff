@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/gray2"
     android:layout_height="match_parent"
+    android:background="@color/gray2"
     tools:context=".fragments.CalendarFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,57 +28,165 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <CalendarView
-        android:id="@+id/datePicker1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/layout_header"
-        android:theme="@style/CalenderViewCustom"
-        android:dateTextAppearance="@style/CalenderViewDateCustomText"
-        android:weekDayTextAppearance="@style/CalenderViewWeekCustomText"
-        android:datePickerMode="calendar"/>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/black"
-        android:layout_below="@id/datePicker1"
-        android:id="@+id/txt_day_calendar"/>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/img_no_data"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/txt_day_calendar"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/image_no_data" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="Không có lịch"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/gray"
-        android:textStyle="bold"
-        android:layout_below="@id/img_no_data"
-        android:id="@+id/txt_no_data"/>
-
-    <androidx.recyclerview.widget.RecyclerView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_day_calendar"
-        android:layout_marginHorizontal="20dp"
+        android:layout_below="@+id/layout_header"
         android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/rcv_list_calendar"/>
+        android:layout_height="wrap_content">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_name_part"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="Tên bộ phận:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/sp_name_part"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/botron_edittext"
+                    android:padding="7dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_drop_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/icon_arrow_drop_down"
+                    app:layout_constraintBottom_toBottomOf="@+id/sp_name_part"
+                    app:layout_constraintEnd_toEndOf="@+id/sp_name_part"
+                    app:layout_constraintTop_toTopOf="@+id/sp_name_part" />
+
+                <TextView
+                    android:id="@+id/txt_name_part"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:ellipsize="end"
+                    android:text="abc"
+                    android:visibility="gone"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/sp_name_part"
+                    app:layout_constraintTop_toTopOf="@+id/sp_name_part" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <CalendarView
+                android:id="@+id/datePicker1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_name_part"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:datePickerMode="calendar"
+                android:dateTextAppearance="@style/CalenderViewDateCustomText"
+                android:theme="@style/CalenderViewCustom"
+                android:weekDayTextAppearance="@style/CalenderViewWeekCustomText" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_day_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_add_calendar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_add_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/datePicker1"
+                android:layout_centerHorizontal="true"
+                android:foreground="@drawable/animation_click">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_add_post"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/icon_add"
+                    app:layout_constraintBottom_toBottomOf="@+id/txt_add_news"
+                    app:layout_constraintStart_toEndOf="@+id/txt_add_news"
+                    app:layout_constraintTop_toTopOf="@+id/txt_add_news" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_add_news"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thêm sự kiện"
+                    android:textColor="@color/gray"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_no_data"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_below="@+id/txt_day_calendar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:src="@drawable/image_no_data" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txt_no_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_no_data"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Không có lịch"
+                android:textColor="@color/gray"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_list_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_day_calendar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/pb_load_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:theme="@style/white"
+        android:visibility="gone" />
 
 </RelativeLayout>

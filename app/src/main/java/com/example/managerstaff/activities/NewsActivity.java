@@ -1,11 +1,19 @@
 package com.example.managerstaff.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -21,11 +29,20 @@ import android.widget.Toast;
 
 import com.example.managerstaff.R;
 import com.example.managerstaff.adapter.PostAdapter;
+import com.example.managerstaff.adapter.UserAdapter;
 import com.example.managerstaff.api.ApiService;
 import com.example.managerstaff.databinding.ActivityNewsBinding;
+import com.example.managerstaff.interfaces.ItemTouchHelperListener;
 import com.example.managerstaff.models.Post;
+import com.example.managerstaff.models.TypePost;
 import com.example.managerstaff.models.User;
 import com.example.managerstaff.models.responses.ListPostResponse;
+import com.example.managerstaff.models.responses.ListTypePostResponse;
+import com.example.managerstaff.models.responses.ObjectResponse;
+import com.example.managerstaff.supports.Database;
+import com.example.managerstaff.supports.PaginationScrollListener;
+import com.example.managerstaff.supports.RecyclerViewItemPostTouchHelper;
+import com.example.managerstaff.supports.RecyclerViewItemUserTouchHelper;
 import com.example.managerstaff.supports.Support;
 
 import java.util.ArrayList;
@@ -36,37 +53,108 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NewsActivity extends AppCompatActivity {
+public class NewsActivity extends AppCompatActivity implements ItemTouchHelperListener {
 
     ActivityNewsBinding binding;
-    private List<Post> listPosts,listPostSearchs;
-    private List<String> listTypePosts;
+    private List<Post> listPosts;
+    private List<String> listNameTypePosts;
+    private List<TypePost> listTypePosts;
     private User user;
     private PostAdapter adapter;
-    private String timeStartFilter,timeEndFilter,typeFilter;
-    private int IdUser;
+    private int p;
+    private boolean mIsLoading, showMore;
+    private String dataSearch;
+    private String timeStartFilter, timeEndFilter, typeFilter;
+    private boolean mIsLastPage;
+    private int IdUser, IdAdmin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityNewsBinding.inflate(getLayoutInflater());
+        binding = ActivityNewsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        listPosts=new ArrayList<>();
-        listPostSearchs=new ArrayList<>();
-        listTypePosts=new ArrayList<>();
-        timeStartFilter="";
-        timeEndFilter="";
-        typeFilter="";
-        user=new User();
-        adapter=new PostAdapter(NewsActivity.this);
+        listPosts = new ArrayList<>();
+        listNameTypePosts = new ArrayList<>();
+        listTypePosts = new ArrayList<>();
+        timeStartFilter = "";
+        timeEndFilter = "";
+        typeFilter = "";
+        dataSearch = "";
+        user = new User();
+        adapter = new PostAdapter(NewsActivity.this);
         IdUser = getIntent().getIntExtra("id_user", 0);
+        p = getIntent().getIntExtra("position", -1);
+        IdAdmin = getIntent().getIntExtra("id_admin", 0);
         adapter.setIdUser(IdUser);
+        adapter.setIdAdmin(IdAdmin);
+        adapter.setData(listPosts);
+        showMore = true;
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(NewsActivity.this);
         binding.rcvListNews.setLayoutManager(linearLayoutManager);
+        binding.rcvListNews.setAdapter(adapter);
         clickCallApiGetListPosts();
+        clickCallApiGetAllTypePost();
+        binding.rcvListNews.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
+            @Override
+            public void loadMoreItems() {
+
+                if (showMore) {
+                    mIsLoading = true;
+                    binding.pbLoadShowMore.setVisibility(View.VISIBLE);
+                    loadNextPage();
+                }
+            }
+
+            @Override
+            public boolean isLoading() {
+                return mIsLoading;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return mIsLastPage;
+            }
+
+            @Override
+            public void onScrolledUp() {
+
+            }
+        });
+        if (IdUser == IdAdmin) {
+            RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            binding.rcvListNews.addItemDecoration(itemDecoration);
+
+            ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerViewItemPostTouchHelper(0, ItemTouchHelper.LEFT, this, (IdUser == IdAdmin) ? true : false);
+            new ItemTouchHelper(simpleCallback).attachToRecyclerView(binding.rcvListNews);
+        }
+
+        if (IdUser == IdAdmin) {
+            binding.layoutAddNews.setVisibility(View.VISIBLE);
+        } else {
+            binding.layoutAddNews.setVisibility(View.GONE);
+        }
+
+        binding.layoutAddNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NewsActivity.this, AddPostActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(NewsActivity.this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle();
+                intent.putExtra("id_user", IdUser);
+                intent.putExtra("id_post", 0);
+                intent.putExtra("position", p);
+                intent.putExtra("action", "add");
+                startActivity(intent, bndlanimation);
+            }
+        });
 
         binding.imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(NewsActivity.this, MainActivity.class);
+                intent.putExtra("id_user", IdUser);
+                intent.putExtra("id_admin", IdAdmin);
+                intent.putExtra("position", p);
+                startActivity(intent);
                 finish();
             }
         });
@@ -91,47 +179,39 @@ public class NewsActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                clickCallApiGetListPosts();
-
+                if(!dataSearch.equals(binding.edtSearch.getText().toString())) {
+                    showMore = true;
+                    adapter.resetData();
+                    dataSearch=binding.edtSearch.getText().toString();
+                    clickCallApiGetListPosts();
+                }
             }
         });
-
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        timeStartFilter="";
-        timeEndFilter="";
-        typeFilter="";
-        clickCallApiGetListPosts();
-        binding.edtSearch.setText("");
-    }
-
-    private void showDialogFilterNews(){
+    private void showDialogFilterNews() {
         final Dialog dialog = new Dialog(NewsActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_filter_post);
-
         String type = "Tất cả";
-        String time= Support.changeReverDateTime(Support.geDayNow(),false);
-        TextView txtTimeStart=dialog.findViewById(R.id.txt_time_start_post);
-        TextView txtTimeEnd=dialog.findViewById(R.id.txt_time_end_post);
-        TextView txtTypePost=dialog.findViewById(R.id.txt_type_post);
-        ImageView imgClockStart=dialog.findViewById(R.id.img_show_clock_time_start_post);
-        ImageView imgClockEnd=dialog.findViewById(R.id.img_show_clock_time_end_post);
-        Spinner spTypePost=dialog.findViewById(R.id.sp_type_post);
-        ImageView imgCancel=dialog.findViewById(R.id.img_cancel);
-        Button btnFilter=dialog.findViewById(R.id.btn_filter);
-        Button btnUnFilter=dialog.findViewById(R.id.btn_unfilter);
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(NewsActivity.this, android.R.layout.simple_spinner_item, listTypePosts);
+        String time = Support.changeReverDateTime(Support.getDayNow(), false);
+        TextView txtTimeStart = dialog.findViewById(R.id.txt_time_start_post);
+        TextView txtTimeEnd = dialog.findViewById(R.id.txt_time_end_post);
+        TextView txtTypePost = dialog.findViewById(R.id.txt_type_post);
+        ImageView imgClockStart = dialog.findViewById(R.id.img_show_clock_time_start_post);
+        ImageView imgClockEnd = dialog.findViewById(R.id.img_show_clock_time_end_post);
+        Spinner spTypePost = dialog.findViewById(R.id.sp_type_post);
+        ImageView imgCancel = dialog.findViewById(R.id.img_cancel);
+        Button btnFilter = dialog.findViewById(R.id.btn_filter);
+        Button btnUnFilter = dialog.findViewById(R.id.btn_unfilter);
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(NewsActivity.this,  R.layout.item_spinner, listNameTypePosts);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTypePost.setAdapter(typeAdapter);
         spTypePost.setSelection(0);
-        txtTimeStart.setText((timeStartFilter.length()>0)?timeStartFilter:time);
-        txtTimeEnd.setText((timeEndFilter.length()>0)?timeEndFilter:time);
-        txtTypePost.setText((typeFilter.length()>0)?typeFilter:type);
+        txtTimeStart.setText((timeStartFilter.length() > 0) ? timeStartFilter : time);
+        txtTimeEnd.setText((timeEndFilter.length() > 0) ? timeEndFilter : time);
+        txtTypePost.setText((typeFilter.length() > 0) ? typeFilter : type);
 
         spTypePost.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -167,24 +247,30 @@ public class NewsActivity extends AppCompatActivity {
         btnUnFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timeStartFilter="";
-                timeEndFilter="";
-                typeFilter="";
+                binding.pbLoadData.setVisibility(View.VISIBLE);
+                timeStartFilter = "";
+                timeEndFilter = "";
+                typeFilter = "";
+                showMore = true;
+                adapter.resetData();
                 clickCallApiGetListPosts();
                 dialog.dismiss();
+                binding.pbLoadData.setVisibility(View.GONE);
             }
         });
 
         btnFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timeStartFilter=txtTimeStart.getText().toString();
-                timeEndFilter=txtTimeEnd.getText().toString();
-                typeFilter=txtTypePost.getText().toString();
-                listPosts=Support.filterPost(listPosts,timeStartFilter,timeEndFilter,typeFilter);
-                adapter.setData(listPosts);
-                binding.txtNumberNews.setText(listPosts.size()+" tin tức");
+                binding.pbLoadData.setVisibility(View.VISIBLE);
+                timeStartFilter = txtTimeStart.getText().toString();
+                timeEndFilter = txtTimeEnd.getText().toString();
+                typeFilter = txtTypePost.getText().toString();
+                showMore = true;
+                adapter.resetData();
+                clickCallApiGetListPosts();
                 dialog.dismiss();
+                binding.pbLoadData.setVisibility(View.GONE);
             }
         });
 
@@ -198,24 +284,24 @@ public class NewsActivity extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
 
-                                String timeS=Support.getFormatString(day,month+1,year);
+                                String timeS = Support.getFormatString(day, month + 1, year);
 
-                                if(Support.compareToDate(timeS,txtTimeEnd.getText().toString())<=0){
+                                if (Support.compareToDate(timeS, txtTimeEnd.getText().toString()) <= 0) {
                                     selectedDate.set(Calendar.YEAR, year);
                                     selectedDate.set(Calendar.MONTH, month);
                                     selectedDate.set(Calendar.DAY_OF_MONTH, day);
 
                                     txtTimeStart.setText(timeS);
-                                }else{
-                                    Toast.makeText(NewsActivity.this, "Thời gian không hợp lệ", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Support.showDialogWarningSetTimeDay(NewsActivity.this);
                                 }
 
 
                             }
                         },
                         Integer.parseInt(txtTimeStart.getText().toString().substring(6)),
-                        Integer.parseInt(txtTimeStart.getText().toString().substring(3,5))-1,
-                        Integer.parseInt(txtTimeStart.getText().toString().substring(0,2))
+                        Integer.parseInt(txtTimeStart.getText().toString().substring(3, 5)) - 1,
+                        Integer.parseInt(txtTimeStart.getText().toString().substring(0, 2))
                 );
                 datePickerDialog.show();
             }
@@ -230,22 +316,22 @@ public class NewsActivity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                String timeE=Support.getFormatString(day,month+1,year);
+                                String timeE = Support.getFormatString(day, month + 1, year);
 
-                                if(Support.compareToDate(timeE,txtTimeEnd.getText().toString())>=0){
+                                if (Support.compareToDate(timeE, txtTimeEnd.getText().toString()) >= 0) {
                                     selectedDate.set(Calendar.YEAR, year);
                                     selectedDate.set(Calendar.MONTH, month);
                                     selectedDate.set(Calendar.DAY_OF_MONTH, day);
 
                                     txtTimeEnd.setText(timeE);
-                                }else{
+                                } else {
                                     Toast.makeText(NewsActivity.this, "Thời gian không hợp lệ", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         },
                         Integer.parseInt(txtTimeEnd.getText().toString().substring(6)),
-                        Integer.parseInt(txtTimeEnd.getText().toString().substring(3,5))-1,
-                        Integer.parseInt(txtTimeEnd.getText().toString().substring(0,2))
+                        Integer.parseInt(txtTimeEnd.getText().toString().substring(3, 5)) - 1,
+                        Integer.parseInt(txtTimeEnd.getText().toString().substring(0, 2))
                 );
                 datePickerDialog.show();
             }
@@ -264,30 +350,37 @@ public class NewsActivity extends AppCompatActivity {
 
 
     private void clickCallApiGetListPosts() {
-        ApiService.apiService.getAllPost().enqueue(new Callback<ListPostResponse>() {
+        if (adapter.getListPosts().size() == 0)
+            binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getAllPost(Support.getAuthorization(this),adapter.getListPosts().size(), 16, binding.edtSearch.getText().toString(), Support.changeReverDateTime(timeStartFilter, true), Support.changeReverDateTime(timeEndFilter, true), Support.getIdTypePost(listTypePosts, typeFilter)).enqueue(new Callback<ListPostResponse>() {
             @Override
             public void onResponse(Call<ListPostResponse> call, Response<ListPostResponse> response) {
                 ListPostResponse listPostResponse = response.body();
                 if (listPostResponse != null) {
-                    if(listPostResponse.getCode()==200){
-                        listPosts=listPostResponse.getListPosts();
-                        listTypePosts=Support.getListTypePost(listPosts);
-                        listPosts=Support.searchListPosts(listPosts,binding.edtSearch.getText().toString());
-                        listPosts=Support.filterPost(listPosts,timeStartFilter,timeEndFilter,typeFilter);
-                        if(listPosts.size()>0){
+                    if(listPostResponse.getCode()==200) {
+                        List<Post> list = listPostResponse.getListPosts();
+                        if (list.size() == 0) showMore = false;
+                        if (adapter.getListPosts().size() > 0) {
+                            adapter.addAllData(list);
+                        } else {
+                            adapter.setData(list);
+                        }
+                        if (adapter.getListPosts().size() > 0) {
                             binding.imgNoData.setVisibility(View.GONE);
                             binding.txtNoData.setVisibility(View.GONE);
-                        }else{
+                        } else {
                             binding.imgNoData.setVisibility(View.VISIBLE);
                             binding.txtNoData.setVisibility(View.VISIBLE);
                         }
-                        adapter.setData(listPosts);
-                        binding.rcvListNews.setAdapter(adapter);
-                        binding.txtNumberNews.setText(listPosts.size()+" tin tức");
+                        binding.txtNumberNews.setText(adapter.getListPosts().size() + " tin tức");
                     }else{
-                        Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(listPostResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(NewsActivity.this);
+                        }else{
+                            Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
+                } else {
                     Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -297,10 +390,113 @@ public class NewsActivity extends AppCompatActivity {
                 Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder) {
+        if (viewHolder instanceof PostAdapter.PostViewHolder && IdUser == IdAdmin) {
+
+            int indexDelete = viewHolder.getAdapterPosition();
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setMessage("Bạn có muốn xoá bản tin này không?");
+            Post postDelete = adapter.getListPosts().get(indexDelete);
+            alertDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    clickCallApiDeletePost(postDelete);
+                }
+            });
+            alertDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+            alertDialog.show();
+
+        }
+    }
+
+    private void clickCallApiDeletePost(Post postDelete) {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.deletePost(Support.getAuthorization(this),postDelete.getIdPost()).enqueue(new Callback<ObjectResponse>() {
+            @Override
+            public void onResponse(Call<ObjectResponse> call, Response<ObjectResponse> response) {
+                ObjectResponse objectResponse = response.body();
+                if (objectResponse != null) {
+                    if (objectResponse.getCode() == 200) {
+                        adapter.removeData(postDelete);
+                        binding.txtNumberNews.setText(adapter.getListPosts().size() + " tin tức");
+                        Toast.makeText(NewsActivity.this, getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
+                    }else{
+                        if(objectResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(NewsActivity.this);
+                        }else{
+                            adapter.notifyDataSetChanged();
+                            Toast.makeText(NewsActivity.this, getString(R.string.delete_false), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(NewsActivity.this, getString(R.string.delete_false), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ObjectResponse> call, Throwable t) {
+                adapter.setData(listPosts);
+                Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.pbLoadData.setVisibility(View.GONE);
+    }
+
+    private void clickCallApiGetAllTypePost() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getAllTypePost(Support.getAuthorization(this)).enqueue(new Callback<ListTypePostResponse>() {
+            @Override
+            public void onResponse(Call<ListTypePostResponse> call, Response<ListTypePostResponse> response) {
+                ListTypePostResponse listTypePostResponse = response.body();
+                if (listTypePostResponse != null) {
+                    if(listTypePostResponse.getCode()==200) {
+                        listTypePosts = listTypePostResponse.getListTypePosts();
+                        listNameTypePosts = Support.getListTypePost(listTypePosts, true);
+                    }else{
+                        if(listTypePostResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(NewsActivity.this);
+                        }else{
+                            Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ListTypePostResponse> call, Throwable t) {
+                Toast.makeText(NewsActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.pbLoadData.setVisibility(View.GONE);
+    }
+
+    private void loadNextPage() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mIsLoading = false;
+                clickCallApiGetListPosts();
+                binding.pbLoadShowMore.setVisibility(View.GONE);
+            }
+        }, 1000);
+    }
+
 }

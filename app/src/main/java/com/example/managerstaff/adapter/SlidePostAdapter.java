@@ -56,7 +56,7 @@ public class SlidePostAdapter extends PagerAdapter {
                 .error(R.drawable.img_notify)
                 .placeholder(R.drawable.img_notify)
                 .into(imgPost);
-        txtTitlePost.setText(post.getTypePost());
+        txtTitlePost.setText(post.getTypePost().getTypeName());
         txtBodyPost.setText(post.getHeaderPost());
         txtTimePost.setText(post.getTimePost());
 
@@ -66,6 +66,7 @@ public class SlidePostAdapter extends PagerAdapter {
                 Intent intent=new Intent(Mcontext, PostDetailActivity.class);
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(Mcontext, R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
                 intent.putExtra("id_user",IdUser);
+                intent.putExtra("position",0);
                 intent.putExtra("id_post",post.getIdPost());
                 Mcontext.startActivity(intent,bndlanimation);
             }

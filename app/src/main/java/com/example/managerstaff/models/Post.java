@@ -14,7 +14,7 @@ public class Post {
     private int idPost;
     @SerializedName("type_post")
     @Expose
-    private String typePost;
+    private TypePost typePost;
     @SerializedName("header_post")
     @Expose
     private String headerPost;
@@ -43,7 +43,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(int idPost, String typePost, String headerPost, String timePost, String content, String numLike, String numComment, ArrayList<Image> listImages, ArrayList<Comment> listComments, int idUser) {
+    public Post(int idPost, TypePost typePost, String headerPost, String timePost, String content, String numLike, String numComment, ArrayList<Image> listImages, ArrayList<Comment> listComments, int idUser) {
         this.idPost = idPost;
         this.typePost = typePost;
         this.headerPost = headerPost;
@@ -56,6 +56,14 @@ public class Post {
         this.idUser = idUser;
     }
 
+    public TypePost getTypePost() {
+        return typePost;
+    }
+
+    public void setTypePost(TypePost typePost) {
+        this.typePost = typePost;
+    }
+
     public int getIdUser() {
         return idUser;
     }
@@ -64,13 +72,6 @@ public class Post {
         this.idUser = idUser;
     }
 
-    public String getTypePost() {
-        return typePost;
-    }
-
-    public void setTypePost(String typePost) {
-        this.typePost = typePost;
-    }
 
     public String getHeaderPost() {
         return headerPost;

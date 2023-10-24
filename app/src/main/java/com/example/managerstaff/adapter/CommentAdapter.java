@@ -19,10 +19,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.managerstaff.R;
+import com.example.managerstaff.api.ApiService;
 import com.example.managerstaff.models.Comment;
 import com.example.managerstaff.models.User;
+import com.example.managerstaff.models.responses.UserResponse;
+import com.example.managerstaff.supports.Support;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
@@ -30,6 +38,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private List<Comment> mListComment;
     private int idUser;
     private User user, userAdmin;
+
+    private CommentAdapter.OnClickListener onClickListener;
+
+    public interface OnClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnClickListener(CommentAdapter.OnClickListener listener) {
+        this.onClickListener = listener;
+    }
 
     public CommentAdapter(Activity mActivity) {
         this.mActivity = mActivity;
@@ -54,12 +72,29 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         notifyDataSetChanged();
     }
 
+    public void addAllData(List<Comment> list) {
+        this.mListComment.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public List<Comment> getmListComment() {
+        return mListComment;
+    }
+
+    public void removeData(Comment comment){
+        this.mListComment.remove(comment);
+        notifyDataSetChanged();
+    }
+
     public void setIdUser(int idUser) {
         this.idUser = idUser;
     }
 
     public void addComment(Comment comment) {
-        this.mListComment.add(comment);
+        List<Comment> list=new ArrayList<>();
+        list.add(comment);
+        list.addAll(mListComment);
+        this.mListComment=list;
         notifyDataSetChanged();
     }
 
@@ -74,31 +109,56 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         int p=position;
         Comment comment = mListComment.get(position);
-        if(comment!=null){
-            if(comment.getIdUser()==user.getId()){
+        if(comment!=null && user!=null && userAdmin!=null){
+            if(comment.getIdUser()==user.getIdUser()){
+                holder.txtNameSender.setVisibility(View.VISIBLE);
                 holder.cvUserSender.setVisibility(View.VISIBLE);
                 holder.layoutBodySender.setVisibility(View.VISIBLE);
                 holder.cvUserReceiver.setVisibility(View.GONE);
                 holder.layoutBodyReceiver.setVisibility(View.GONE);
+                holder.txtNameReceiver.setVisibility(View.GONE);
 
                 holder.commentBodySender.setText(comment.getContent());
+                if(position==mListComment.size()-1 || mListComment.get(position+1).getIdUser()!=comment.getIdUser()){
+                    holder.txtSpaceSender.setVisibility(View.VISIBLE);
+                    holder.txtNameSender.setVisibility(View.VISIBLE);
+                    holder.cvUserSender.setVisibility(View.VISIBLE);
+                    holder.txtNameSender.setText(mActivity.getString(R.string.you));
+                }else{
+                    holder.txtSpaceSender.setVisibility(View.GONE);
+                    holder.cvUserSender.setVisibility(View.INVISIBLE);
+                    holder.txtNameSender.setVisibility(View.GONE);
+                }
                 Glide.with(mActivity).load(user.getAvatar())
                         .error(R.drawable.icon_user_gray)
                         .placeholder(R.drawable.icon_user_gray)
                         .into(holder.imgUserSender);
-
+                if(onClickListener!=null) {
+                    holder.layoutBodySender.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            onClickListener.onItemClick(p);
+                            return true;
+                        }
+                    });
+                }
             }else{
-                if(comment.getIdUser()==userAdmin.getId()){
-                    holder.cvUserSender.setVisibility(View.GONE);
-                    holder.layoutBodySender.setVisibility(View.GONE);
+                holder.txtNameSender.setVisibility(View.GONE);
+                holder.cvUserSender.setVisibility(View.GONE);
+                holder.layoutBodySender.setVisibility(View.GONE);
+                holder.txtNameReceiver.setVisibility(View.VISIBLE);
+                holder.cvUserReceiver.setVisibility(View.VISIBLE);
+                holder.layoutBodyReceiver.setVisibility(View.VISIBLE);
+                holder.commentBodyReceiver.setText(comment.getContent());
+                if(position==mListComment.size()-1 || mListComment.get(position+1).getIdUser()!=comment.getIdUser()){
+                    holder.txtSpace.setVisibility(View.VISIBLE);
+                    holder.txtNameReceiver.setVisibility(View.VISIBLE);
                     holder.cvUserReceiver.setVisibility(View.VISIBLE);
-                    holder.layoutBodyReceiver.setVisibility(View.VISIBLE);
-
-                    holder.commentBodyReceiver.setText(comment.getContent());
-                    Glide.with(mActivity).load(userAdmin.getAvatar())
-                            .error(R.drawable.img_notify)
-                            .placeholder(R.drawable.img_notify)
-                            .into(holder.imgUserReceiver);
+                    clickCallApiGetUserDetail(comment.getIdUser(),holder);
+                }else{
+                    holder.txtSpace.setVisibility(View.GONE);
+                    holder.cvUserReceiver.setVisibility(View.INVISIBLE);
+                    holder.txtNameReceiver.setVisibility(View.GONE);
                 }
             }
         }
@@ -106,29 +166,38 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     }
 
-    public void showConfirmationDialog(int position) {
-        Comment comment=mListComment.get(position);
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle("Do you want to delete this comment?")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+    private void clickCallApiGetUserDetail(int ID, @NonNull CommentAdapter.CommentViewHolder holder) {
+        ApiService.apiService.getUserDetail(Support.getAuthorization(mActivity),ID).enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                UserResponse userResponse = response.body();
+                if (userResponse != null) {
+                    if(userResponse.getCode()==200){
+                        User user=userResponse.getUser();
+                        holder.txtNameReceiver.setText(user.getFullName());
+                        if(user.getAvatar().length()>0){
+                            Glide.with(mActivity).load(user.getAvatar())
+                                    .error(R.drawable.icon_user_gray)
+                                    .placeholder(R.drawable.icon_user_gray)
+                                    .into(holder.imgUserReceiver);
                         }
-                        mListComment.remove(comment);
-                        notifyDataSetChanged();
-                        Toast.makeText(mActivity, "Success!", Toast.LENGTH_SHORT).show();
+                    }else{
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(mActivity);
+                        }else{
+                            Toast.makeText(mActivity, mActivity.getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+                } else {
+                    Toast.makeText(mActivity, mActivity.getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(mActivity, mActivity.getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -143,7 +212,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         private ImageView imgUserReceiver,imgUserSender;
         private CardView cvUserReceiver,cvUserSender;
         private ConstraintLayout layoutBodyReceiver,layoutBodySender;
-        private TextView commentBodyReceiver,commentBodySender;
+        private TextView commentBodyReceiver,commentBodySender,txtNameSender,txtNameReceiver,txtSpace,txtSpaceSender;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -152,9 +221,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             cvUserReceiver=itemView.findViewById(R.id.cardView1);
             cvUserSender=itemView.findViewById(R.id.cardView2);
             layoutBodyReceiver=itemView.findViewById(R.id.layout_receiver);
+            txtSpace=itemView.findViewById(R.id.txt_space);
+            txtSpaceSender=itemView.findViewById(R.id.txt_space_sender);
             layoutBodySender=itemView.findViewById(R.id.layout_sender);
             commentBodyReceiver=itemView.findViewById(R.id.body_commnet_receive);
             commentBodySender=itemView.findViewById(R.id.body_commnet_send);
+            txtNameSender=itemView.findViewById(R.id.txt_name_user_sender);
+            txtNameReceiver=itemView.findViewById(R.id.txt_name_user_receiver);
 
         }
     }

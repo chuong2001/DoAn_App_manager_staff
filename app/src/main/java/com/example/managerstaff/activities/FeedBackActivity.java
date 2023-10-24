@@ -97,19 +97,26 @@ public class FeedBackActivity extends AppCompatActivity {
 
 
     private void clickCallApiSendFeedback() {
-        ApiService.apiService.sendFeedBack(IdUser, Support.getTimeNow(),binding.edtContentFeedback.getText().toString()).enqueue(new Callback<ObjectResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.sendFeedBack(Support.getAuthorization(this),IdUser, Support.getTimeNow(),binding.edtContentFeedback.getText().toString()).enqueue(new Callback<ObjectResponse>() {
             @Override
             public void onResponse(Call<ObjectResponse> call, Response<ObjectResponse> response) {
                 ObjectResponse objectResponse = response.body();
                 if (objectResponse != null) {
-                    if(objectResponse.getCode()==200){
+                    if(objectResponse.getCode()==201){
                         binding.edtContentFeedback.setText("");
                         isEnterContent=false;
                         setButtonShadow();
                         Toast.makeText(FeedBackActivity.this, getString(R.string.send_success), Toast.LENGTH_SHORT).show();
                     }else{
-                        Toast.makeText(FeedBackActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(objectResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(FeedBackActivity.this);
+                        }else{
+                            Toast.makeText(FeedBackActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
+                } else {
+                    Toast.makeText(FeedBackActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -118,6 +125,7 @@ public class FeedBackActivity extends AppCompatActivity {
                 Toast.makeText(FeedBackActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     public void finish() {

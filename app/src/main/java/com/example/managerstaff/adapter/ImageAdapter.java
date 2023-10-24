@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.managerstaff.R;
+import com.example.managerstaff.activities.ChangePasswordActivity;
 import com.example.managerstaff.activities.PostDetailActivity;
+import com.example.managerstaff.activities.ShowImageActivity;
 import com.example.managerstaff.models.Image;
 import com.example.managerstaff.models.Post;
 
@@ -26,8 +28,20 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PostViewHold
     private Activity mActivity;
 
     private List<Image> listImages;
+    private int REQUEST_CODE=100;
+    private String action;
 
     private int IdUser;
+
+    private ImageAdapter.OnClickListener onClickListener;
+
+    public interface OnClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnClickListener(ImageAdapter.OnClickListener listener) {
+        this.onClickListener = listener;
+    }
 
     public ImageAdapter(Activity mActivity) {
         this.mActivity = mActivity;
@@ -37,8 +51,26 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PostViewHold
         this.IdUser=IdUser;
     }
 
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public void updateData(String url, int index){
+        this.listImages.get(index).setImage(url);
+        notifyDataSetChanged();
+    }
+
+    public List<Image> getListImages() {
+        return listImages;
+    }
+
     public void setData(List<Image> listImages){
         this.listImages=listImages;
+        notifyDataSetChanged();
+    }
+
+    public void removeData(Image image){
+        this.listImages.remove(image);
         notifyDataSetChanged();
     }
 
@@ -51,6 +83,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PostViewHold
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+        int p=position;
         Image image=listImages.get(position);
         if(image!=null){
 
@@ -61,12 +94,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PostViewHold
                         .into(holder.imgImage);
             }
 
-            holder.layout_image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
+            if(onClickListener!=null) {
+                holder.layout_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onClickListener.onItemClick(p);
+                    }
+                });
+            }
         }
 
     }

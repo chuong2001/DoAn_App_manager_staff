@@ -30,6 +30,9 @@ public class User {
     @SerializedName("email")
     @Expose
     private String email;
+    @SerializedName("is_admin")
+    @Expose
+    private int isAdmin;
     @SerializedName("phone")
     @Expose
     private String phone;
@@ -61,7 +64,7 @@ public class User {
     public User() {
     }
 
-    public User(int idUser, String avatar, String fullName, String birthday, String gender, String address, String email, String phone, double wage, ArrayList<Comment> listComments, ArrayList<Post> listPosts, ArrayList<TimeIn> listTimeIns, ArrayList<TimeOut> listTimeOuts, Account account, Part part, Position position) {
+    public User(int idUser, String avatar, String fullName, String birthday, String gender, String address, String email, int isAdmin, String phone, double wage, ArrayList<Comment> listComments, ArrayList<Post> listPosts, ArrayList<TimeIn> listTimeIns, ArrayList<TimeOut> listTimeOuts, Account account, Part part, Position position) {
         this.idUser = idUser;
         this.avatar = avatar;
         this.fullName = fullName;
@@ -69,6 +72,7 @@ public class User {
         this.gender = gender;
         this.address = address;
         this.email = email;
+        this.isAdmin = isAdmin;
         this.phone = phone;
         this.wage = wage;
         this.listComments = listComments;
@@ -80,12 +84,20 @@ public class User {
         this.position = position;
     }
 
-    public int getId() {
+    public int getIdUser() {
         return idUser;
     }
 
-    public void setId(int idUser) {
+    public void setIdUser(int idUser) {
         this.idUser = idUser;
+    }
+
+    public int getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(int isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public String getAvatar() {

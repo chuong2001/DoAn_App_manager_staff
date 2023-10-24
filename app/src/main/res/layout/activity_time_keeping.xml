@@ -18,6 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:foreground="@drawable/animation_click"
             android:src="@drawable/icon_back_left"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +84,7 @@
 
             <Spinner
                 android:id="@+id/sp_month"
-                android:layout_width="100dp"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
@@ -101,6 +102,7 @@
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/sp_month"
                 app:layout_constraintStart_toStartOf="@+id/sp_month"
                 app:layout_constraintTop_toTopOf="@+id/sp_month" />
@@ -129,7 +131,7 @@
 
             <Spinner
                 android:id="@+id/sp_year"
-                android:layout_width="100dp"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/border_outline_round"
@@ -146,6 +148,7 @@
                 android:layout_marginStart="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/sp_year"
                 app:layout_constraintStart_toStartOf="@+id/sp_year"
                 app:layout_constraintTop_toTopOf="@+id/sp_year" />
@@ -191,8 +194,66 @@
                     android:padding="20dp">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_info_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/txt_title7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/full_name"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txt_name_user"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/layout_position_user"
+                        android:layout_width="match_parent"
+                        android:layout_below="@+id/layout_info_user"
+                        android:layout_marginTop="15dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/txt_title8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/posistion"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/txt_position_user"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layout_working_day"
                         android:layout_width="match_parent"
+                        android:layout_marginTop="15dp"
+                        android:layout_below="@+id/layout_position_user"
                         android:layout_height="wrap_content">
 
                         <TextView
@@ -209,7 +270,6 @@
                             android:id="@+id/txt_number_of_working_days"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -239,7 +299,6 @@
                             android:id="@+id/txt_wage_of_day"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1.000.000 VND"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -270,7 +329,6 @@
                             android:id="@+id/txt_wage_of_month"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10.000.000 VND"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -300,7 +358,6 @@
                             android:id="@+id/txt_number_of_times_late"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -330,7 +387,6 @@
                             android:id="@+id/txt_some_holidays"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="20"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -408,6 +464,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/layout_title_table"
+                android:paddingBottom="20dp"
                 android:layout_marginHorizontal="20dp" />
 
         </RelativeLayout>
@@ -423,5 +480,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/pb_load_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:theme="@style/white"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.Generated;
 
 @Generated("jsonschema2pojo")
-public class FeedBack {
+public class StaffFeedBack {
     @SerializedName("id_feedback")
     @Expose
     private int idFeedback;
@@ -19,15 +19,27 @@ public class FeedBack {
     @SerializedName("is_read")
     @Expose
     private String isRead;
+    @SerializedName("user")
+    @Expose
+    private int idUser;
 
-    public FeedBack() {
+    public StaffFeedBack() {
     }
 
-    public FeedBack(int idFeedback, String timeFeedback, String content, String isRead) {
+    public StaffFeedBack(int idFeedback, String timeFeedback, String content, String isRead, int idUser) {
         this.idFeedback = idFeedback;
         this.timeFeedback = timeFeedback;
         this.content = content;
         this.isRead = isRead;
+        this.idUser = idUser;
+    }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
     }
 
     public int getIdFeedback() {

@@ -44,11 +44,12 @@ public class PostDetailActivity extends AppCompatActivity {
 
     ActivityPostDetailBinding binding;
     private int IdUser;
-    private int IdPost;
+    private int IdPost,IdAdmin;
     private Post post;
     private User user,userAdmin;
     private ImageAdapter adapter;
     private boolean isEnterContent;
+    private int REQUEST_CODE=100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +57,21 @@ public class PostDetailActivity extends AppCompatActivity {
         binding = ActivityPostDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         IdUser = getIntent().getIntExtra("id_user", 0);
+        IdAdmin = getIntent().getIntExtra("id_admin", 0);
         IdPost = getIntent().getIntExtra("id_post", 0);
         userAdmin=new User();
         post=new Post();
         user=new User();
         isEnterContent=false;
         adapter=new ImageAdapter(this);
+        adapter.setAction("show");
+        adapter.setOnClickListener(position -> {
+            Intent intent=new Intent(this, ShowImageActivity.class);
+            intent.putExtra("position",position);
+            intent.putExtra("action","show");
+            intent.putExtra("uri_avatar",post.getListImages().get(position).getImage());
+            startActivityForResult(intent,REQUEST_CODE);
+        });
         adapter.setIdUser(IdUser);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rcvListImage.setLayoutManager(linearLayoutManager);
@@ -69,6 +79,30 @@ public class PostDetailActivity extends AppCompatActivity {
         clickCallApiGetPostDetail();
         clickCallApiGetUserDetail();
 
+        binding.txtEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PostDetailActivity.this, AddPostActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(PostDetailActivity.this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle();
+                intent.putExtra("id_user", IdUser);
+                intent.putExtra("id_post", IdPost);
+                intent.putExtra("action", "edit");
+                startActivity(intent, bndlanimation);
+            }
+        });
+
+        if(IdUser==IdAdmin){
+            binding.txtEdit.setVisibility(View.VISIBLE);
+        }else{
+            binding.txtEdit.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        clickCallApiGetPostDetail();
+        clickCallApiGetUserDetail();
     }
 
     private void onEventClick(){
@@ -79,13 +113,24 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+        binding.cvAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(PostDetailActivity.this, ShowImageActivity.class);
+                intent.putExtra("position",0);
+                intent.putExtra("action","show");
+                intent.putExtra("uri_avatar",userAdmin.getAvatar());
+                startActivityForResult(intent,REQUEST_CODE);
+            }
+        });
+
         binding.imgQuestionAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(PostDetailActivity.this, ChatActivity.class);
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(PostDetailActivity.this, R.anim.slide_in_right,R.anim.slide_out_left).toBundle();
                 intent.putExtra("id_user",IdUser);
-                intent.putExtra("id_admin",userAdmin.getId());
+                intent.putExtra("id_admin",userAdmin.getIdUser());
                 intent.putExtra("id_post",IdPost);
                 startActivity(intent,bndlanimation);
             }
@@ -96,7 +141,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
 
     private void clickCallApiGetUserDetail() {
-        ApiService.apiService.getUserDetail(IdUser).enqueue(new Callback<UserResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getUserDetail(Support.getAuthorization(this),IdUser).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
@@ -104,9 +150,13 @@ public class PostDetailActivity extends AppCompatActivity {
                     if(userResponse.getCode()==200){
                         user=userResponse.getUser();
                     }else{
-                        Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(PostDetailActivity.this);
+                        }else{
+                            Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
+                } else {
                     Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -116,17 +166,19 @@ public class PostDetailActivity extends AppCompatActivity {
                 Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     private void clickCallApiGetPostDetail() {
-        ApiService.apiService.getPostDetail(IdPost).enqueue(new Callback<PostResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getPostDetail(Support.getAuthorization(this),IdPost).enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
                 PostResponse postResponse = response.body();
                 if (postResponse != null) {
                     if(postResponse.getCode()==200){
                         post=postResponse.getPost();
-                        binding.txtTypePost.setText(post.getTypePost());
+                        binding.txtTypePost.setText(post.getTypePost().getTypeName());
                         binding.txtHeaderPost.setText(post.getHeaderPost());
                         binding.txtTimeCreatePost.setText(post.getTimePost());
                         binding.txtBodyPost.setText(post.getContent());
@@ -134,10 +186,14 @@ public class PostDetailActivity extends AppCompatActivity {
                         binding.rcvListImage.setAdapter(adapter);
                         clickCallApiGetUserDetail(post.getIdUser());
                     }else{
-                        Toast.makeText(PostDetailActivity.this,getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(postResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(PostDetailActivity.this);
+                        }else{
+                            Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(PostDetailActivity.this,getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -146,10 +202,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 Toast.makeText(PostDetailActivity.this,getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     private void clickCallApiGetUserDetail(int IdAdmin) {
-        ApiService.apiService.getUserDetail(IdAdmin).enqueue(new Callback<UserResponse>() {
+        binding.pbLoadData.setVisibility(View.VISIBLE);
+        ApiService.apiService.getUserDetail(Support.getAuthorization(this),IdAdmin).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 UserResponse userResponse = response.body();
@@ -164,10 +222,14 @@ public class PostDetailActivity extends AppCompatActivity {
                                     .into(binding.imgAvatarUser);
                         }
                     }else{
-                        Toast.makeText(PostDetailActivity.this,getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        if(userResponse.getCode()==401){
+                            Support.showDialogWarningExpiredAu(PostDetailActivity.this);
+                        }else{
+                            Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else{
-                    Toast.makeText(PostDetailActivity.this,getString(R.string.system_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PostDetailActivity.this, getString(R.string.system_error), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -176,6 +238,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 Toast.makeText(PostDetailActivity.this,getString(R.string.system_error), Toast.LENGTH_SHORT).show();
             }
         });
+        binding.pbLoadData.setVisibility(View.GONE);
     }
 
     public void finish() {

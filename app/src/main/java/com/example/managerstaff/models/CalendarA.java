@@ -22,7 +22,7 @@ public class CalendarA {
 
     @SerializedName("type_calendar")
     @Expose
-    private String typeCalendar;
+    private TypeCalendar typeCalendar;
 
     @SerializedName("address")
     @Expose
@@ -48,7 +48,7 @@ public class CalendarA {
     public CalendarA() {
     }
 
-    public CalendarA(int idCalendar, String headerCalendar, String bodyCalendar, String typeCalendar, String address, String dayCalendar, String timeStart, String timeEnd, int part) {
+    public CalendarA(int idCalendar, String headerCalendar, String bodyCalendar, TypeCalendar typeCalendar, String address, String dayCalendar, String timeStart, String timeEnd, int part) {
         this.idCalendar = idCalendar;
         this.headerCalendar = headerCalendar;
         this.bodyCalendar = bodyCalendar;
@@ -60,11 +60,11 @@ public class CalendarA {
         this.part = part;
     }
 
-    public String getTypeCalendar() {
+    public TypeCalendar getTypeCalendar() {
         return typeCalendar;
     }
 
-    public void setTypeCalendar(String typeCalendar) {
+    public void setTypeCalendar(TypeCalendar typeCalendar) {
         this.typeCalendar = typeCalendar;
     }
 

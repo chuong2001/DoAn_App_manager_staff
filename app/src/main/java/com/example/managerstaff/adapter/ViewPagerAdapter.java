@@ -13,22 +13,22 @@ import com.example.managerstaff.fragments.HomeFragment;
 import com.example.managerstaff.fragments.TimekeepingFragment;
 import com.example.managerstaff.fragments.UserFragment;
 import com.example.managerstaff.fragments.UtilitiesFragment;
+import com.example.managerstaff.models.User;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private int IdUser;
-    private int isAdmin;
+    private int IdUser,IdAdmin;
 
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
 
-    public void setIdUser(int IdUser){
-        this.IdUser=IdUser;
+    public void setIdUser(int idUser) {
+        IdUser = idUser;
     }
 
-    public void setIsAdmin(int isAdmin) {
-        this.isAdmin = isAdmin;
+    public void setIdAdmin(int idAdmin) {
+        IdAdmin = idAdmin;
     }
 
     @NonNull
@@ -36,8 +36,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         Bundle bundle = new Bundle();
-        bundle.putInt("id_user", this.IdUser);
-        bundle.putInt("is_admin", this.isAdmin);
+        bundle.putInt("id_user", IdUser);
+        bundle.putInt("id_admin", IdAdmin);
         HomeFragment fragHome = new HomeFragment();
         ADTimeKeepingFragment fragTimeKeepingAD=new ADTimeKeepingFragment();
         fragTimeKeepingAD.setArguments(bundle);
@@ -56,7 +56,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return fragHome;
             case 1:
-                return (isAdmin==0)?fragTimekeeping:fragTimeKeepingAD;
+                return (IdUser!=IdAdmin)?fragTimekeeping:fragTimeKeepingAD;
             case 2:
                 return fragCalendar;
             case 3:

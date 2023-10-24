@@ -6,17 +6,30 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.managerstaff.R;
 import com.example.managerstaff.adapter.ViewPagerAdapter;
+import com.example.managerstaff.api.ApiService;
 import com.example.managerstaff.databinding.ActivityMainBinding;
 import com.example.managerstaff.fragments.HomeFragment;
+import com.example.managerstaff.models.User;
+import com.example.managerstaff.models.responses.UserResponse;
+import com.example.managerstaff.supports.Support;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
 
     ActivityMainBinding binding;
-    private int IdUser,isAdmin;
+    private int IdUser,p,IdAdmin;
+    private User user;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +38,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         setContentView(binding.getRoot());
 
         IdUser = getIntent().getIntExtra("id_user", 0);
-        isAdmin = getIntent().getIntExtra("is_admin", 0);
-
-        ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        IdAdmin = getIntent().getIntExtra("id_admin", 0);
+        p = getIntent().getIntExtra("position", -1);
+        user=new User();
+        viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPagerAdapter.setIdUser(IdUser);
-        viewPagerAdapter.setIsAdmin(isAdmin);
+        viewPagerAdapter.setIdAdmin(IdAdmin);
         binding.viewPager.setAdapter(viewPagerAdapter);
+        setFinish();
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -92,6 +107,27 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     public void onFragment1ButtonClicked(int position) {
         binding.viewPager.setCurrentItem(position);
         switch (position){
+            case 0:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_home).setChecked(true);
+                break;
+            case 1:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_timekeeping).setChecked(true);
+                break;
+            case 2:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_calendar).setChecked(true);
+                break;
+            case 3:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_news).setChecked(true);
+                break;
+            case 4:
+                binding.bottomMenuApp.getMenu().findItem(R.id.item_user).setChecked(true);
+                break;
+        }
+    }
+
+    private void setFinish(){
+        binding.viewPager.setCurrentItem(p);
+        switch (p){
             case 0:
                 binding.bottomMenuApp.getMenu().findItem(R.id.item_home).setChecked(true);
                 break;
